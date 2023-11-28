@@ -1,0 +1,120 @@
+/* style.css */
+
+/* Resetting default margin and padding */
+html, body, ul, li {
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    line-height: 1.6;
+    background-color: #f7f7f7;
+}
+
+nav {
+    background-color: #103585;
+    color: white;
+    padding: 10px;
+}
+
+nav ul {
+    list-style-type: none;
+    display: flex;
+    justify-content: flex-end;/* Aligns items to the left */
+    padding: 0; /* Remove default padding */
+}
+
+nav ul a {
+    text-decoration: none;
+    color: white;
+    padding: 0 4px; /* Adjust padding as needed */
+    display: block; /* Ensure each link takes full width */
+}
+
+nav ul a:hover {
+    background-color: rgb(172, 93, 93); /* Change on hover color if needed */
+}
+
+
+.container {
+    width: 80%;
+    margin: 20px auto;
+    background-color: white;
+    padding: 20px;
+}
+
+/*footer {
+    background-color: #333;
+    color: white;
+    text-align: center;
+    height: 100px;
+    margin-bottom: 0;
+
+}
+*/
+
+.nav-brand {
+    display: flex;
+    align-items: center;
+}
+
+.nav-brand h1 {
+    margin-right: 10px; 
+    margin-left: 10px;/* Adjust margin as needed */
+}
+
+.nav-brand img {
+    height: 50px;
+    width: 50px; 
+}
+
+.form {
+    max-width: 300px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #dbd5d5;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.form h1 {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #333;
+}
+
+.form button {
+    display: block;
+    width: 50%;
+    padding: 10px;
+    margin-top: 10px;
+    background-color: #333;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    text-align: center;
+}
+
+.form a {
+    display: block;
+    text-align: center;
+    margin-top: 10px;
+    color: #333;
+}
+
+.button-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px; /* Adjust margin as needed */
+}
+
+.custom-input::after {
+    content: attr(data-help-text);
+    display: block;
+    font-family: 'Your Custom Font', sans-serif; /* Change 'Your Custom Font' to the desired font */
+    font-size: 8px; /* Adjust the font size */
+    color: #3f1a1a; /* Change the color to your preferred color */
+    margin-top: 5px; /* Adjust the spacing */
+}

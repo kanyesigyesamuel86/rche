@@ -1,0 +1,53 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>{% block title %}RCHE{% endblock %}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="{% static 'style.css' %}"> 
+</head>
+<body>
+    <nav>
+        {% block navbar %}
+        <div class="nav-brand">
+            <img src="{% static 'images/photo.jpg' %}" alt="Ryakasinga Logo"> 
+            <h1>Ryakasinga CHE</h1> 
+            
+        </div>
+            <li>
+                <ul>
+                    <a href="{% url 'login_page' %}">Log In</a>
+                    <a href="{% url 'signup' %}">Signup</a>
+                    <a href="{% url 'contact' %}">Contact Us</a>
+                    <!--<a href="{% url 'all_users' %}">All Users</a> -->
+                </ul>
+            </li>
+        {% endblock %}
+    </nav>
+
+    <!-- Main content -->
+    <div class="container">
+        {% block content %}
+
+        {% endblock %}
+    </div>
+
+    <!-- Footer content -->
+    <footer>
+        {% block footer %}
+            <!-- Your footer content goes here -->
+        {% endblock %} 
+    </footer>
+
+    <!-- JavaScript -->
+   <!-- <script src="{% static 'your_js_file.js' %}"></script> -->
+    <!-- Other scripts or JavaScript includes -->
+
+</body>
+</html>
+
+
+

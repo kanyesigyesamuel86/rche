@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Dashboard</title>
+</head>
+
+{% block content %}
+    <h1>Dashboard</h1>
+    <a href="{% url 'logout' %}">Log Out</a>
+
+    <h2>Students</h2>
+    <ul>
+        {% for student in students %}
+            <li>{{ student.name }}, Class: {{ student.class_name }}, Gender: {{ student.gender }}</li>
+        {% endfor %}
+    </ul>
+
+    <h2>Teachers</h2>
+    <ul>
+        {% for teacher in teachers %}
+            <li>{{ teacher.name }}, Subject: {{ teacher.subject }}</li>
+        {% endfor %}
+    </ul>
+
+{%  endblock %}
+</html>

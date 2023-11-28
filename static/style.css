@@ -1,0 +1,44 @@
+/* style.css */
+
+/* Resetting default margin and padding */
+html, body, ul, li {
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    line-height: 1.6;
+    background-color: #f7f7f7;
+}
+
+nav {
+    background-color: #333;
+    color: white;
+    padding: 10px;
+}
+
+nav ul {
+    list-style-type: none;
+    display: flex;
+    justify-content: space-around;
+}
+
+nav ul a {
+    text-decoration: none;
+    color: white;
+}
+
+.container {
+    width: 80%;
+    margin: 20px auto;
+    background-color: white;
+    padding: 20px;
+}
+
+footer {
+    background-color: #333;
+    color: white;
+    text-align: center;
+    padding: 10px;
+}
