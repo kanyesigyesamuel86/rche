@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+{% block title %}
+Log In
+{% endblock %}
+{% block content %}
+
+<form method="post">
+    <h2>Login</h2>
+    {% csrf_token %}
+    <div class="form-group">
+        <label for="id_email">Username:</label>
+        <input type="text" name="email" id="id_email" required>
+    </div>
+    <div class="form-group">
+        <label for="id_password">Password:</label>
+        <div class="input-group">
+            <input type="password" name="password" id="id_password" required>
+            <button type="button" id="togglePassword" onclick="togglePasswordVisibility()">Show Password</button>
+        </div>
+    </div>
+    <button type="submit">Login</button>
+</form>
+
+<script>
+    function togglePasswordVisibility() {
+        var passwordInput = document.getElementById("id_password");
+        var toggleButton = document.getElementById("togglePassword");
+
+        if (passwordInput.type === "password") {
+            passwordInput.type = "text";
+            toggleButton.textContent = "Hide Password";
+        } else {
+            passwordInput.type = "password";
+            toggleButton.textContent = "Show Password";
+        }
+    }
+</script>
+
+
+
+{% endblock %}

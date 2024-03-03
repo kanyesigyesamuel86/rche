@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+ {% block title %} Available Vacancies {% endblock %} 
+ 
+ {% block content %}
+<div class="about-content">
+  <h1>Available Vacancies</h1>
+  {% if course_list %}
+  <ul>
+    {% for course in course_list %}
+    <li><a class="btn" href="{{ course.get_absolute_url }}">{{ course.name }}</a><a href="{% url 'apply' course.id %}" style=" color: maroon">Apply</a></li>
+    {% endfor %}
+  </ul>
+  {% else %}
+  <p>There are currently no courses available </p> 
+  {% endif %}
+</div>
+
+{% endblock %}

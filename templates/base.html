@@ -1,0 +1,88 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'style.css' %}">
+</head>
+
+<style>
+    footer a img {
+    width: 20px; /* Set a fixed width for the icons */
+    height: auto; /* Maintain aspect ratio */
+    border-radius: 50%; /* Apply rounded corners */
+    transition: transform 0.3s ease; /* Add a smooth transition effect */
+}
+
+footer a {
+    margin: 0 15px; /* Add horizontal spacing between the icons */
+}
+
+
+footer a img:hover {
+    transform: scale(1.1); /* Scale up the icon on hover */
+}
+
+.apply {
+    border-radius: 5px;
+    border-style: solid;
+    border-color: rgb(65, 8, 8);
+    border-width: 2px; /* Set the border width to 1px */
+    padding: 2px; 
+}
+
+</style>
+
+
+<body>
+    <header>
+        {% if user.is_authenticated %}
+            <ul><a href="/">Welcome</a>
+                <a href="{% url 'register' %}">Register</a>
+                <a href="{% url 'logged_out' %}">Logout</a>
+                <a href="{% url 'dashboard' %}">Dashboard</a>
+                <a href="{% url 'course_list' %}" class="apply" >Apply</a>
+                 {{ user.get_username }}
+                
+
+            </ul>
+        {% else %}
+        <ul><a href="/">Welcome</a>
+            <a href="{% url 'login' %}">Login</a>
+            <a href="{% url 'register' %}">Register</a>
+            <a href="{% url 'course_list' %}" class="apply">Apply</a>
+
+
+        </ul>
+        {% endif %}
+    </header>
+
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer>
+        <div> <a href="#" class="btn">Get in Touch</a></div>
+        <br>
+        <a href="https://www.facebook.com/kanyesigye.samuel.54" target="_blank">
+            <img src="{% static 'images/facebook-icon.png' %}" alt="Facebook">
+        </a>
+        <a href="https://www.linkedin.com/in/kanyesigye-samuel-9420b6254/" target="_blank">
+            <img src="{% static 'images/linkedin-icon.png' %}" alt="Linkedin">
+        </a>
+        <a href="https://twitter.com/KanyesigyeSam11" target="_blank">
+            <img src="{% static 'images/twitter-icon.png' %}" alt="Twitter">
+        </a>
+        <a href="#" target="_blank">
+            <img src="{% static 'images/instagram-icon.png' %}" alt="Instagram">
+        </a>
+        
+        <p>&copy; 2024 Kanyesigye Samuel - All rights reserved.</p>
+    </footer>
+
+</body>
+
+</html>

@@ -1,0 +1,9 @@
+{% extends 'base.html' %}
+{% block title %} Dashboard {% endblock %}
+{% block content %}
+<h2>Welcome to the Dashboard</h2>
+<p>Access Role: {% if user.is_headteacher %}Headteacher{% elif user.is_admin %}Admin{% elif user.is_teacher %}Teacher{% else %}Student <a href="{% url 'student_dashboard' %}">Continue</a>{% endif %}</p>
+<p> {{num_visits}}  </p>
+
+{% endblock %}
+

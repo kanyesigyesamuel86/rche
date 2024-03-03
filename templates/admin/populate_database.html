@@ -1,0 +1,24 @@
+{% extends '../base.html' %}
+{% block title %}
+Populate Database
+{% endblock %}
+
+{% block content %}
+<h1>Populate Database</h1>
+<form method="post">
+    {% csrf_token %}
+    <h2>Add Class</h2>
+    {{ course_form.as_p }}
+    <button type="submit" name="add_course">Submit</button>
+</form>
+
+<form method="post">
+    {% csrf_token %}
+    <br><br>
+    <h2>Add Subject</h2>
+    {{ subject_form.as_p }}
+    <button type="submit" name="add_subject">Submit</button>
+</form>
+
+{% endblock %}
+

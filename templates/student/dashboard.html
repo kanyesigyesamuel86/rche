@@ -1,0 +1,65 @@
+<!-- dashboard.html -->
+{% extends 'base.html' %}
+{% block content %}
+<h1>Welcome, {{ student.user.first_name }} {{ student.user.last_name }}</h1>
+<h2>Profile</h2>
+<p>Roll Number: {{ student.roll_number }}</p>
+<p>Phone Number: {{ student.phone_number }}</p>
+<p>Address: {{ student.address }}</p>
+
+<h2>Courses</h2>
+<ul>
+  {% for enrollment in enrollments %}
+  <li>{{ enrollment.course.name }} - {{ enrollment.course.description }}</li>
+  {% endfor %}
+</ul>
+
+<h2>Assignments</h2>
+<ul>
+  {% for assignment in assignments %}
+  <li>{{ assignment.title }} - Due Date: {{ assignment.due_date }}</li>
+  {% endfor %}
+</ul>
+
+<h2>Attendance</h2>
+<table>
+  <tr>
+    <th>Date</th>
+    <th>Status</th>
+  </tr>
+  {% for att in attendance %}
+  <tr>
+    <td>{{ att.date }}</td>
+    <td>{{ att.status }}</td>
+  </tr>
+  {% endfor %}
+</table>
+
+<h2>Announcements</h2>
+<ul>
+  {% for announcement in announcements %}
+  <li>{{ announcement.title }} - {{ announcement.content }} - {{ announcement.date }}</li>
+  {% endfor %}
+</ul>
+
+<h2>Library</h2>
+<ul>
+  {% for book in borrowed_books %}
+  <li>{{ book.book.title }} by {{ book.book.author }}</li>
+  {% endfor %}
+</ul>
+
+<h2>Fees</h2>
+<ul>
+  {% for fee in fees %}
+  <li>Amount: {{ fee.amount }} - Payment Date: {{ fee.payment_date }}</li>
+  {% endfor %}
+</ul>
+
+<h2>Feedbacks</h2>
+<ul>
+  {% for feedback in feedbacks %}
+  <li>{{ feedback.content }} - {{ feedback.date }}</li>
+  {% endfor %}
+</ul>
+{% endblock %}

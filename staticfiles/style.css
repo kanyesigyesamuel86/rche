@@ -1,0 +1,366 @@
+/* Reset some default styles */
+body,
+h1,
+h2,
+h3,
+p,
+ul {
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f7f7f7;
+    color: #333;
+    margin: 0;
+}
+
+
+header {
+    background-color: #0e498b;
+    color: #fff;
+    padding: 20px;
+    text-align: center;
+}
+
+
+
+.profile-photo-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    overflow: hidden;
+    border-radius: 50%;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    padding: 20px; /* Add padding around the items */
+    text-align: center; /* Center text horizontally */
+}
+
+.profile-photo {
+    width: 150px; /* Adjust the size as needed */
+    height: 150px; /* Adjust the size as needed */
+    border-radius: 50%;
+    object-fit: cover;
+    margin-bottom: 10px; /* Add margin between the photo and text */
+}
+
+/* Add styles for other items */
+h1, p, .btn a {
+    margin: 2px 5px; /* Add margin to each item for spacing */
+}
+
+.apply {
+    border: maroon;
+}
+
+.about-content {
+    padding: 50px; 
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    margin: 10px 50px;
+    border-radius: 10px;
+  
+}
+
+.about-content h2 {
+    color: #3498db; /* Set the color of the heading */
+}
+
+.about-content p {
+    color: #555; /* Set the color of the text */
+    line-height: 1.6; 
+    margin-bottom: 15px; 
+}
+
+.about-content .btn {
+    display: inline-block;
+    margin-top: 20px; /* Add top margin for spacing */
+    padding: 10px 20px; /* Adjust padding for the button */
+    background-color: #3498db;
+    color: #fff;
+    text-decoration: none;
+    border-radius: 4px;
+    transition: background-color 0.3s ease; /* Smooth transition effect for color change */
+}
+
+.about-content .btn:hover {
+    background-color: #2980b9; /* Change background color on hover */
+}
+
+
+
+nav ul {
+    list-style: none;
+}
+
+nav ul li {
+    display: inline;
+    margin-right: 20px;
+}
+
+nav a {
+    color: #fff;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+main {
+    padding: 20px;
+}
+
+footer {
+    background-color: #333;
+    color: #fff;
+    text-align: center;
+    padding: 20px;
+    position: relative; /* Change fixed to relative */
+    bottom: 0; /* Align the bottom of the footer */
+    width: 100%;
+}
+
+footer a img {
+    width: 40px; /* Set a fixed width for the icons */
+    height: auto; /* Maintain aspect ratio */
+    border-radius: 50%; /* Apply rounded corners */
+    transition: transform 0.3s ease; /* Add a smooth transition effect */
+}
+
+footer a img:hover {
+    transform: scale(1.1); /* Scale up the icon on hover */
+}
+
+h2 {
+    font-size: 24px;
+    color: #333;
+}
+
+form {
+    margin: 20px 400px; /* Centering the form horizontally */
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  }
+  
+  /* Styling form labels */
+  label {
+    display: block;
+    margin-bottom: 10px;
+    color: #333; /* Adjust label color */
+  }
+  
+  /* Styling input fields */
+input, 
+  textarea {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-sizing: border-box;
+    font-family: Arial, Helvetica, sans-serif;
+    font: 1em sans-serif;
+  }
+  
+
+
+  /* Styling the submit button */
+  button[type="submit"] {
+    width: 20%;
+    padding: 10px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin: 20px;
+  }
+  
+  /* Hover effect on submit button */
+  button[type="submit"]:hover {
+    background-color: #0056b3;
+  }
+
+
+label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 8px;
+}
+
+
+button {
+    background-color: #4CAF50;
+    color: white;
+    padding: 4px 4px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #63211c;
+}
+
+a {
+    color: #3498db;
+    text-decoration: none;
+    transition: color 0.3s ease; /* Smooth transition effect for color change */
+}
+
+
+a:hover {
+    text-decoration: underline;
+}
+
+ul a {
+    color: white;
+    text-decoration: none;
+    transition: color 0.3s ease; 
+    margin: 0 10px;
+}
+
+/* profile page */
+
+.content {
+    margin: auto 200px;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.profile-header {
+    padding: 10px 10px;
+}
+
+.profile-header h1 {
+    color: #3498db;
+}
+
+.profile-header h2 {
+    color: #555;
+}
+
+.profile-header p {
+    margin: 5px 0;
+}
+
+.overview {
+    margin-top: 15px;
+}
+
+.update-profile-link {
+    display: inline-block;
+    margin-top: 10px;
+    padding: 4px 4px;
+    background-color: #3498db;
+    color: #fff;
+    text-decoration: none;
+    border-radius: 4px;
+}
+
+.section-container {
+    margin-top: 20px;
+}
+
+h2 {
+    margin-bottom: 10px;
+    color: #555;
+}
+
+ul {
+    list-style: none;
+    padding: 0;
+
+}
+
+li {
+    margin-bottom: 20px;
+}
+
+
+.add-link {
+    display: inline-block;
+    margin-top: 10px;
+    padding: 4px 4px;
+    background-color: #2ecc71;
+    color: #fff;
+    text-decoration: none;
+    border-radius: 4px;
+}
+
+.update-link {
+    display: inline-block;
+    margin-top: 10px;
+    padding: 4px 4px;
+    background-color: #3498db;
+    color: #fff;
+    text-decoration: none;
+    border-radius: 4px;
+}
+
+
+
+  .section-container {
+    flex: 1 1 calc(50% - 20px); /* Adjust the width as needed */
+    margin: 10px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+  }
+
+  .error-message {
+    color: #c03333;
+  }
+
+
+/* transition images */
+.slideshow-container {
+    display: flex;
+    justify-content: center; /* Horizontally center the images */
+    align-items: center; /* Vertically center the images */
+}
+.mySlides {
+display: none;
+}
+
+.fade {
+animation-name: fade;
+animation-duration: 2.5s;
+}
+
+@keyframes fade {
+from {
+  opacity: 0.4;
+}
+to {
+  opacity: 1;
+}
+}
+
+@media screen and (max-width: 768px) {
+    /* Adjustments for smaller screens */
+    header {
+        padding: 10px;
+    }
+
+    nav ul li {
+        display: block;
+        margin-bottom: 10px;
+    }
+
+    .profile-container {
+        margin-bottom: 20px;
+    }
+
+    .content {
+        margin: 10px 0;
+    }
+
+    form {
+        margin: 0 auto;
+        max-width: 100%;
+    }
+}
