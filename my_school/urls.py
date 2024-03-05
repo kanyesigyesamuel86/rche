@@ -11,10 +11,11 @@ urlpatterns = [
     path('apply/<int:course_id>/', views.apply_course, name='apply'),
     path('course/<int:pk>/', views.CourseDetailView.as_view(), name='course-detail'),
     path('status/<int:application_id>/', views.application_status, name='status'),
-    path('register/', views.register, name='register'),
+    path('register', views.register, name='register'),
     #path('login/', views.login_view, name='login'),
     path('logged_out/', views.logout_view, name='logged_out'),
     path('dashboard/', views.dashboard, name='dashboard'),
     path('student_dashboard/', views.student_dashboard, name = 'student_dashboard'),
+    path('access_denied', views.access_denied, name = 'access_denied')
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 

@@ -26,7 +26,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.getenv('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.getenv('DEBUG_1')
 
 ALLOWED_HOSTS = ['*']
 
@@ -137,6 +137,5 @@ LOGIN_REDIRECT_URL = '/'
 
 
 AUTHENTICATION_BACKENDS = [
-    'my_school.backends.EmailBackend',
     'django.contrib.auth.backends.ModelBackend',
 ]

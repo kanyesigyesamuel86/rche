@@ -9,31 +9,11 @@ from .forms import CustomUserCreationForm
 from . models import Student, Enrollment, Assignment, Attendance, Announcement, LibraryBook, BorrowedBook, Fee, Feedback, Course
 from django .views import generic
 from django.contrib import messages
+from .decorators import manager_required, admin_required
+from django.contrib.auth.decorators import login_required
 
-def headteacher_required(view_func):
-    @wraps(view_func)
-    def _wrapped_view(request, *args, **kwargs):
-        if not request.user.is_authenticated or not request.user.is_headteacher:
-            return HttpResponseForbidden()
-        return view_func(request, *args, **kwargs)
-    return _wrapped_view
-
-def admin_required(view_func):
-    @wraps(view_func)
-    def _wrapped_view(request, *args, **kwargs):
-        if not request.user.is_authenticated or not request.user.is_admin:
-            return HttpResponseForbidden()
-        return view_func(request, *args, **kwargs)
-    return _wrapped_view
-
-def teacher_required(view_func):
-    @wraps(view_func)
-    def _wrapped_view(request, *args, **kwargs):
-        if not request.user.is_authenticated or not request.user.is_teacher:
-            return HttpResponseForbidden()
-        return view_func(request, *args, **kwargs)
-    return _wrapped_view
-
+def access_denied(request):
+    return render(request, 'access_denied.html')
 
 def register(request):
     if request.method == 'POST':
@@ -69,6 +49,8 @@ def dashboard(request):
 def home(request):
     return render(request, 'home.html')
 
+@login_required
+@manager_required
 def populate_database(request):
     if request.method == 'POST':
         course_form = CourseForm(request.POST)
