@@ -3,12 +3,12 @@ from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.urls import reverse
 
+
 class CustomUser(AbstractUser):
     USER_TYPES = (
         ('headteacher', 'Headteacher'),
         ('admin', 'Admin'),
         ('teacher', 'Teacher'),
-        ('student', 'Student'),
     )
     user_type = models.CharField(max_length=20, choices=USER_TYPES, default='standard')
 
@@ -19,6 +19,22 @@ class Student(models.Model):
     roll_number = models.CharField(max_length=20)
     phone_number = models.CharField(max_length=15)
     address = models.TextField()
+
+class NonStudent(models.Model):
+    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
+    position = models.CharField(max_length=100)
+    department = models.CharField(max_length=100)
+    qualifications = models.TextField()
+    date_of_joining = models.DateField(null=True)
+    phone_number = models.CharField(max_length=15)
+    address = models.CharField(max_length=255)
+    emergency_contact_name = models.CharField(max_length=100)
+    emergency_contact_phone = models.CharField(max_length=15)
+
+
+    def __str__(self):
+        return f"{self.user.first_name} {self.user.last_name}"
+
 
 class Course(models.Model):
     name = models.CharField(max_length=100)

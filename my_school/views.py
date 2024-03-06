@@ -5,25 +5,59 @@ from .forms import ApplicationForm, SubjectForm, CourseForm
 from functools import wraps
 from django.http import HttpResponseForbidden
 from django.contrib.auth import authenticate, login, logout
-from .forms import CustomUserCreationForm
-from . models import Student, Enrollment, Assignment, Attendance, Announcement, LibraryBook, BorrowedBook, Fee, Feedback, Course
+from .forms import CustomUserCreationForm, StudentForm, StudentForm2
+from . models import Student, Enrollment, Assignment, Attendance, Announcement, LibraryBook, BorrowedBook, Fee, Feedback, Course, CustomUser, NonStudent
 from django .views import generic
 from django.contrib import messages
-from .decorators import manager_required, admin_required
+from .decorators import hteacher_required, admin_required, teacher_required
 from django.contrib.auth.decorators import login_required
 
 def access_denied(request):
     return render(request, 'access_denied.html')
 
+def registration(request):
+    return render(request, 'registration.html')
+
 def register(request):
     if request.method == 'POST':
         form = CustomUserCreationForm(request.POST)
         if form.is_valid():
-            form.save()
+            user = form.save(commit=False)
+            user_type = form.cleaned_data['user_type']
+            user.save()
+            NonStudent.objects.create(user=user)
+
             return redirect('login')
     else:
         form = CustomUserCreationForm()
     return render(request, 'register.html', {'form': form})
+
+def register_student(request):
+    if request.method == 'POST':
+        form = StudentForm(request.POST)
+        if form.is_valid():
+            user = form.save(commit=False)
+            user.save()
+            Student.objects.create(user=user)
+            return redirect('login')
+    else:
+        form = StudentForm()
+    return render(request, 'register.html', {'form': form})
+
+def register_student2(request):
+    user_id = request.session.get('user_id')
+    if not user_id:
+        return redirect('register_student')
+
+    user = CustomUser.objects.get(username=user_id)
+    if request.method == 'POST':
+        form = StudentForm2(request.POST, instance=user)
+        if form.is_valid():
+            form.save(),
+            return redirect('login')
+    else:
+        form = StudentForm2(instance=user)
+    return render(request, 'register1.html', {'form': form, 'username':user})
 
 def login_view(request):
     if request.method == 'POST':
@@ -50,7 +84,7 @@ def home(request):
     return render(request, 'home.html')
 
 @login_required
-@manager_required
+@admin_required
 def populate_database(request):
     if request.method == 'POST':
         course_form = CourseForm(request.POST)
@@ -64,10 +98,6 @@ def populate_database(request):
         course_form = CourseForm()
         subject_form = SubjectForm()
     return render(request, 'admin/populate_database.html', {'course_form': course_form, 'subject_form': subject_form})
-
-#def apply_course_list(request):
-#   courses = Course.objects.all()
-#    return render(request, 'course_list.html', {'courses': courses})
 
 class CourseListView(generic.ListView):
     model = Course
@@ -102,6 +132,7 @@ def application_status(request, application_id):
 def student_dashboard(request):
     try:
         student = Student.objects.get(user=request.user)
+
         enrollments = Enrollment.objects.filter(student=student)
         assignments = Assignment.objects.filter(course__in=enrollments.values_list('course', flat=True))
         attendance = Attendance.objects.filter(student=student)

@@ -41,7 +41,7 @@ footer a img:hover {
     <header>
         {% if user.is_authenticated %}
             <ul><a href="/">Welcome</a>
-                <a href="{% url 'register' %}">Register</a>
+                <a href="{% url 'registration' %}">Register</a>
                 <a href="{% url 'logged_out' %}">Logout</a>
                 <a href="{% url 'dashboard' %}">Dashboard</a>
                 <a href="{% url 'course_list' %}" class="apply" >Apply</a>
@@ -52,7 +52,7 @@ footer a img:hover {
         {% else %}
         <ul><a href="/">Welcome</a>
             <a href="{% url 'login' %}">Login</a>
-            <a href="{% url 'register' %}">Register</a>
+            <a href="{% url 'registration' %}">Register</a>
             <a href="{% url 'course_list' %}" class="apply">Apply</a>
 
 

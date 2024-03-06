@@ -1,0 +1,9 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="about-content">
+    <h2>Register</h2>
+    <h3>Registering as;</h3>
+    <a href="{% url 'register' %}">Teacher >></a> <br>
+    <a href="{% url 'register_student' %}">Student >></a>
+</div>
+{% endblock %}

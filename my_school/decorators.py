@@ -1,16 +1,25 @@
 from django.shortcuts import redirect
 
-def admin_required(view_func):
+def hteacher_required(view_func):
     def wrapper(request, *args, **kwargs):
-        if request.user.user_type == 'admin':
+        if request.user.user_type == 'headteacher':
             return view_func(request, *args, **kwargs)
         else:
             return redirect('access_denied')
     return wrapper
 
-def manager_required(view_func):
+def admin_required(view_func):
     def wrapper(request, *args, **kwargs):
-        if request.user.user_type in ['admin', 'manager']:
+        if request.user.user_type in ['admin', 'headteacher']:
+            return view_func(request, *args, **kwargs)
+        else:
+            return redirect('access_denied')
+    return wrapper
+
+
+def teacher_required(view_func):
+    def wrapper(request, *args, **kwargs):
+        if request.user.user_type in ['admin', 'teacher', 'headteacher']:
             return view_func(request, *args, **kwargs)
         else:
             return redirect('access_denied')
