@@ -8,32 +8,35 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="{% static 'style.css' %}">
 </head>
-
 <style>
-    footer a img {
-    width: 20px; /* Set a fixed width for the icons */
-    height: auto; /* Maintain aspect ratio */
-    border-radius: 50%; /* Apply rounded corners */
-    transition: transform 0.3s ease; /* Add a smooth transition effect */
+
+header {
+    background-color: #0e498b;
+    color: #fff;
+    height: 30px;
+}
+header ul {
+    float: right;
+    margin-bottom: 1px;
 }
 
-footer a {
-    margin: 0 15px; /* Add horizontal spacing between the icons */
-}
 
-
-footer a img:hover {
-    transform: scale(1.1); /* Scale up the icon on hover */
-}
-
-.apply {
+    header  ul .apply {
     border-radius: 5px;
     border-style: solid;
-    border-color: rgb(65, 8, 8);
+    border-color: rgb(10, 8, 8);
     border-width: 2px; /* Set the border width to 1px */
     padding: 2px; 
+    background-color: rgb(85, 26, 17);
 }
 
+header ul .account {
+    border-radius: 50%;
+    border-style: solid;
+    border-width: 1px; /* Set the border width to 1px */
+    float: right;
+
+}
 </style>
 
 
@@ -45,7 +48,7 @@ footer a img:hover {
                 <a href="{% url 'logged_out' %}">Logout</a>
                 <a href="{% url 'dashboard' %}">Dashboard</a>
                 <a href="{% url 'course_list' %}" class="apply" >Apply</a>
-                 {{ user.get_username }}
+                 <a href="{% url 'account_info' %}" class="account" >{{ user.get_username }}</a>
                 
 
             </ul>

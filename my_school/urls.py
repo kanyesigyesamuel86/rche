@@ -12,12 +12,19 @@ urlpatterns = [
     path('course/<int:pk>/', views.CourseDetailView.as_view(), name='course-detail'),
     path('status/<int:application_id>/', views.application_status, name='status'),
     path('registration', views.registration, name='registration'),
-    path('register_staff', views.register, name = 'register'),
+    path('register_staff', views.signup, name = 'register'),
+    path('register_staff_2', views.register_non_student_2, name = 'register_staff_2'),
     path('register_student', views.register_student, name = 'register_student'),
     path('register1', views.register_student2, name = 'register1'),
     path('logged_out/', views.logout_view, name='logged_out'),
     path('dashboard/', views.dashboard, name='dashboard'),
     path('student_dashboard/', views.student_dashboard, name = 'student_dashboard'),
     path('access_denied', views.access_denied, name = 'access_denied'),
+    path('account_activation_sent/', views.account_activation_sent, name='account_activation_sent'),
+    path('activate/<uidb64>/<token>/', views.activate, name='activate'),
+    path('account_activation_complete/', views.account_activation_complete, name='account_activation_complete'),
+
+    path('account_info', views.account_info, name = 'account_info')
+
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 

@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block title %}Activation Email Sent{% endblock %}
+
+{% block content %}
+    {% if user.is_authenticated %}
+    <p>Hello, {{ user.username }}! <br>You have successfully registered {{firstname}}!</p>
+    {% endif %}
+
+    <p>{{ message }}</p>
+    <script>
+        setTimeout(function() {
+            window.location.href = "{% url 'register_staff_2' %}";
+        }, 5000);  // 3000 milliseconds = 3 seconds
+    </script>
+{% endblock %}

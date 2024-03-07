@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+{% block title %}
+Register
+{% endblock %}
+{% block content %}
+<style>
+    table {
+        border-collapse: collapse;
+        width: 60%;
+    }
+
+    th, td {
+        border: 1px solid #ddd;
+        padding: 8px;
+        text-align: left;
+    }
+
+    th {
+        background-color: #f2f2f2;
+    }
+</style>
+
+<div class="about-content">
+    <h2>Hi, {{nonstudent.user}}  </h2> <br><br>
+    <p>
+       <b>Name:</b> {{nonstudent.user.first_name}}  {{nonstudent.user.last_name}} <br>
+        <b>Email: </b>{{nonstudent.user.email}}
+    </p>
+
+    <table>
+        <tbody>
+            {% for item in nonstudent_data %}
+            {% if item.value %}
+              <tr>
+                <th>{{ item.label }}</th>
+                <td>{{ item.value }}</td>
+              </tr>
+            {% endif %}
+          {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+
+{% endblock %}

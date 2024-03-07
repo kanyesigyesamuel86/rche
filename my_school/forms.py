@@ -1,5 +1,5 @@
 from django import forms
-from .models import Application, Student, Course, Subject, CustomUser
+from .models import Application, Student, Course, Subject, CustomUser, NonStudent
 from django.contrib.auth.forms import UserCreationForm
 
 class CustomUserCreationForm(UserCreationForm):
@@ -42,4 +42,9 @@ class StudentForm(UserCreationForm):
 class StudentForm2(forms.ModelForm):
     class Meta:
         model = Student
-        fields = ['user', 'roll_number', 'phone_number', 'address']
+        fields = ['roll_number', 'phone_number', 'address']
+
+class NonStudentForm(forms.ModelForm):
+    class Meta:
+        model = NonStudent
+        fields = ['role', 'department', 'date_of_joining', 'phone_number', 'address', 'next_of_kin', 'next_of_kin_phone', 'course', 'subject']

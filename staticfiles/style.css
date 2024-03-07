@@ -50,8 +50,20 @@ h1, p, .btn a {
     margin: 2px 5px; /* Add margin to each item for spacing */
 }
 
-.apply {
-    border: maroon;
+header  ul .apply {
+    border-radius: 5px;
+    border-style: solid;
+    border-color: rgb(65, 8, 8);
+    border-width: 2px; /* Set the border width to 1px */
+    padding: 2px; 
+}
+
+header ul .account {
+    border-radius: 50%;
+    border-style: solid;
+    border-width: 1px; /* Set the border width to 1px */
+    float: right;
+
 }
 
 .about-content {

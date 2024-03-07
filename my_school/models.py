@@ -5,49 +5,38 @@ from django.urls import reverse
 
 
 class CustomUser(AbstractUser):
+    email_confirmed = models.BooleanField(default=False)
     USER_TYPES = (
+        ('other', 'Other'),
         ('headteacher', 'Headteacher'),
         ('admin', 'Admin'),
         ('teacher', 'Teacher'),
     )
     user_type = models.CharField(max_length=20, choices=USER_TYPES, default='standard')
 
+class Announcement(models.Model):
+    title = models.CharField(max_length=100)
+    content = models.TextField()
+    date = models.DateField(auto_now_add=True)
 
-# Student models
-class Student(models.Model):
-    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
-    roll_number = models.CharField(max_length=20)
-    phone_number = models.CharField(max_length=15)
-    address = models.TextField()
-
-class NonStudent(models.Model):
-    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
-    position = models.CharField(max_length=100)
-    department = models.CharField(max_length=100)
-    qualifications = models.TextField()
-    date_of_joining = models.DateField(null=True)
-    phone_number = models.CharField(max_length=15)
-    address = models.CharField(max_length=255)
-    emergency_contact_name = models.CharField(max_length=100)
-    emergency_contact_phone = models.CharField(max_length=15)
-
-
-    def __str__(self):
-        return f"{self.user.first_name} {self.user.last_name}"
+class Feedback(models.Model):
+    content = models.TextField()
+    date = models.DateField(auto_now_add=True)
 
 
 class Course(models.Model):
     name = models.CharField(max_length=100)
     description = models.TextField(default='')
+    announcement = models.ManyToManyField(Announcement)
     def get_absolute_url(self):
         return reverse('course-detail', kwargs={'pk': self.pk})
 
 class Subject(models.Model):
     name = models.CharField(max_length=100)
     description = models.TextField(default='')
+    announcement = models.ManyToManyField(Announcement)
 
 class Enrollment(models.Model):
-    student = models.ForeignKey(Student, on_delete=models.CASCADE)
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
     enrolled_date = models.DateField(auto_now_add=True)
 
@@ -58,14 +47,8 @@ class Assignment(models.Model):
     due_date = models.DateField()
 
 class Attendance(models.Model):
-    student = models.ForeignKey(Student, on_delete=models.CASCADE)
     date = models.DateField()
     status = models.CharField(max_length=10, choices=[('present', 'Present'), ('absent', 'Absent')])
-
-class Announcement(models.Model):
-    title = models.CharField(max_length=100)
-    content = models.TextField()
-    date = models.DateField(auto_now_add=True)
 
 class LibraryBook(models.Model):
     title = models.CharField(max_length=100)
@@ -73,19 +56,45 @@ class LibraryBook(models.Model):
     quantity = models.PositiveIntegerField()
 
 class BorrowedBook(models.Model):
-    student = models.ForeignKey(Student, on_delete=models.CASCADE)
     book = models.ForeignKey(LibraryBook, on_delete=models.CASCADE)
     borrow_date = models.DateField(auto_now_add=True)
 
 class Fee(models.Model):
-    student = models.ForeignKey(Student, on_delete=models.CASCADE)
     amount = models.DecimalField(max_digits=10, decimal_places=2)
     payment_date = models.DateField(auto_now_add=True)
 
-class Feedback(models.Model):
-    student = models.ForeignKey(Student, on_delete=models.CASCADE)
-    content = models.TextField()
-    date = models.DateField(auto_now_add=True)
+
+# Student models
+class Student(models.Model):
+    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
+    roll_number = models.CharField(max_length=20)
+    phone_number = models.CharField(max_length=15)
+    address = models.CharField(max_length=255)
+
+    course = models.OneToOneField(Course, on_delete=models.CASCADE)
+    subject = models.ManyToManyField(Subject)
+    feedback = models.ManyToManyField(Feedback)
+
+class NonStudent(models.Model):
+    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
+    role = models.CharField(max_length=100)
+    department = models.CharField(max_length=100)
+    qualifications = models.TextField()
+    date_of_joining = models.DateField(null=True)
+    phone_number = models.CharField(max_length=15)
+    address = models.CharField(max_length=255)
+    next_of_kin = models.CharField(max_length=100)
+    next_of_kin_phone = models.CharField(max_length=15)
+    course = models.ManyToManyField(Course)
+    subject = models.ManyToManyField(Subject)
+    feedback = models.ManyToManyField(Feedback)
+
+
+    def __str__(self):
+        return f"{self.user.first_name} {self.user.last_name}"
+
+
+
 
 class Application(models.Model):
     date_applied = models.DateTimeField(auto_now_add=True)

@@ -3,14 +3,23 @@ from django.shortcuts import render, redirect, get_object_or_404, HttpResponse
 from .models import Course, Application
 from .forms import ApplicationForm, SubjectForm, CourseForm
 from functools import wraps
-from django.http import HttpResponseForbidden
+from django.http import HttpResponseForbidden, HttpResponseBadRequest
 from django.contrib.auth import authenticate, login, logout
-from .forms import CustomUserCreationForm, StudentForm, StudentForm2
+from .forms import CustomUserCreationForm, StudentForm, StudentForm2, NonStudentForm
 from . models import Student, Enrollment, Assignment, Attendance, Announcement, LibraryBook, BorrowedBook, Fee, Feedback, Course, CustomUser, NonStudent
 from django .views import generic
 from django.contrib import messages
 from .decorators import hteacher_required, admin_required, teacher_required
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.tokens import default_token_generator
+from django.contrib.sites.shortcuts import get_current_site
+from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+from django.template.loader import render_to_string
+from django.utils.encoding import force_bytes, force_str
+from django.core.mail import EmailMessage
+from django.utils.html import strip_tags
+import time
+from .tokens import account_activation_token
 
 def access_denied(request):
     return render(request, 'access_denied.html')
@@ -32,28 +41,106 @@ def register(request):
         form = CustomUserCreationForm()
     return render(request, 'register.html', {'form': form})
 
+def signup(request):
+    if request.method == 'POST':
+        form = CustomUserCreationForm(request.POST)
+        username = request.POST.get('username')
+        request.session['username']=username
+        print(request.session['username'])
+        if form.is_valid():
+            user = form.save(commit=False)
+            user.is_active = False  # Deactivate the user until email confirmation
+            user.save()
+            
+            # Send email confirmation
+            current_site = get_current_site(request)
+            subject = 'Activate your account'
+            message = render_to_string('registration/account_activation_email.html', {
+                'user': user,
+                'domain': current_site.domain,
+                'uid': urlsafe_base64_encode(force_bytes(user.pk)),
+                'token': account_activation_token.make_token(user),
+            })
+            user.email_user(subject, message)
+            
+            return redirect('account_activation_sent')
+    else:
+        form = CustomUserCreationForm()
+    return render(request, 'register.html', {'form': form})
+
+@login_required
+def account_activation_sent(request):
+    return render(request, 'account_activation_sent.html')
+
+def activate(request, uidb64, token):
+    try:
+        uid = force_str(urlsafe_base64_decode(uidb64))
+        user = CustomUser.objects.get(pk=uid)
+    except (TypeError, ValueError, OverflowError, CustomUser.DoesNotExist):
+        user = None
+
+    if user is not None and account_activation_token.check_token(user, token):
+        NonStudent.objects.create(user=user)
+        user.is_active = True
+        user.email_confirmed = True
+        user.save()
+        request.session['firstname'] = user.first_name
+        request.session['username'] = user.username
+        return redirect('account_activation_complete')
+    else:
+        return HttpResponseBadRequest('Activation link is invalid!')
+
+@login_required
+def account_activation_complete(request):
+    firstname = request.session.get('firstname')
+    message = "Redirecting in 3 seconds..."
+    time.sleep(3)  # Pause for 3 seconds
+    return render(request, 'account_activation_complete.html', {'firstname': firstname, 'message': message})
+
+def register_non_student_2(request):
+    username = request.session.get('username')
+    print(username)
+    if not username:
+        return redirect('register')
+
+    user = NonStudent.objects.get(user__username=username)
+    if request.method == 'POST':
+        form = NonStudentForm(request.POST, instance=user)
+        if form.is_valid():
+            form.save()
+            return redirect('login')
+    else:
+        form = NonStudentForm(instance=user)
+    return render(request, 'register1.html', {'form': form, 'username':user})
+
+
+
 def register_student(request):
     if request.method == 'POST':
         form = StudentForm(request.POST)
+        username = request.POST.get('username')
+        request.session['username']=username
+        print(request.session['username'])
         if form.is_valid():
             user = form.save(commit=False)
             user.save()
             Student.objects.create(user=user)
-            return redirect('login')
+            return redirect('register1')
     else:
         form = StudentForm()
     return render(request, 'register.html', {'form': form})
 
 def register_student2(request):
-    user_id = request.session.get('user_id')
-    if not user_id:
+    username = request.session.get('username')
+    print(username)
+    if not username:
         return redirect('register_student')
 
-    user = CustomUser.objects.get(username=user_id)
+    user = Student.objects.get(user__username=username)
     if request.method == 'POST':
         form = StudentForm2(request.POST, instance=user)
         if form.is_valid():
-            form.save(),
+            form.save()
             return redirect('login')
     else:
         form = StudentForm2(instance=user)
@@ -129,10 +216,35 @@ def application_status(request, application_id):
     application = Application.objects.get(pk=application_id)
     return render(request, 'status.html', {'application': application})
 
+
+def account_info(request):
+    try:
+        nonstudent, created = NonStudent.objects.get_or_create(user=request.user)
+    except Student.DoesNotExist:
+        messages.error(request, 'Student profile does not exist.')
+        return redirect('dashboard')
+    
+    data = [
+        {'label': 'Position', 'value': nonstudent.role},
+        {'label': 'Department', 'value': nonstudent.department},
+        {'label': 'Qualifications', 'value': nonstudent.qualifications},
+        {'label': 'Classes', 'value': nonstudent.course.name},
+        {'label': 'Subjects', 'value': nonstudent.subject.name},
+        {'label': 'Date of Joining', 'value': nonstudent.date_of_joining},
+        {'label': 'Phone Number', 'value': nonstudent.phone_number},
+        {'label': 'Address', 'value': nonstudent.address},
+        {'label': 'Next of Kin', 'value': nonstudent.next_of_kin},
+        {'label': "Next of Kin's Phone", 'value': nonstudent.next_of_kin_phone},
+    ]
+
+
+    
+    return render(request, 'account_info.html', { 'nonstudent_data':data, 'nonstudent':nonstudent})
+
+
 def student_dashboard(request):
     try:
         student = Student.objects.get(user=request.user)
-
         enrollments = Enrollment.objects.filter(student=student)
         assignments = Assignment.objects.filter(course__in=enrollments.values_list('course', flat=True))
         attendance = Attendance.objects.filter(student=student)
@@ -144,14 +256,6 @@ def student_dashboard(request):
     except Student.DoesNotExist:
         messages.error(request, 'Student profile does not exist.')
         return redirect('dashboard')
-    student = Student.objects.get(user=request.user)
-    enrollments = Enrollment.objects.filter(student=student)
-    assignments = Assignment.objects.filter(course__in=enrollments.values_list('course', flat=True))
-    attendance = Attendance.objects.filter(student=student)
-    announcements = Announcement.objects.all().order_by('-date')[:5]
-    borrowed_books = BorrowedBook.objects.filter(student=student)
-    fees = Fee.objects.filter(student=student)
-    feedbacks = Feedback.objects.filter(student=student)
     
     context = {
         'student': student,

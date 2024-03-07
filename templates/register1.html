@@ -6,9 +6,9 @@ Register
 
 <form method="post">
   <h2>Add Information</h2> <br>
-  <h3> Name: {{username}} </h3>
+  <h3> Name: {{username.user}} </h3>
   {% csrf_token %}
-  {{ form2.as_p }}
+  {{ form.as_p }}
   <button type="submit">Register</button>
 </form>
 
