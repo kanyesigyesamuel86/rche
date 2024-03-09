@@ -1,11 +1,14 @@
 from django import forms
-from .models import Application, Student, Course, Subject, CustomUser, NonStudent
+from .models import Application, Student, Course, Subject, CustomUser, NonStudent, Report
 from django.contrib.auth.forms import UserCreationForm
+
+
+
 
 class CustomUserCreationForm(UserCreationForm):
     class Meta(UserCreationForm.Meta):
         model = CustomUser
-        fields = ('username' ,'first_name', 'last_name' ,'email', 'password1', 'password2', 'user_type')
+        fields = ('username' ,'first_name', 'last_name' ,'email', 'password1', 'password2', 'photo', 'user_type')
 
 
 class ApplicationForm(forms.ModelForm):
@@ -37,14 +40,24 @@ class SubjectForm(forms.ModelForm):
 class StudentForm(UserCreationForm):
     class Meta(UserCreationForm.Meta):
         model = CustomUser
-        fields = ('username', 'first_name', 'last_name' , 'password1', 'password2')
+        fields = ('username', 'first_name', 'last_name' , 'password1', 'password2', 'photo')
 
 class StudentForm2(forms.ModelForm):
     class Meta:
         model = Student
-        fields = ['roll_number', 'phone_number', 'address']
-
+        fields = ['roll_number', 'phone_number', 'address', 'course', 'subject']
+        
 class NonStudentForm(forms.ModelForm):
     class Meta:
         model = NonStudent
-        fields = ['role', 'department', 'date_of_joining', 'phone_number', 'address', 'next_of_kin', 'next_of_kin_phone', 'course', 'subject']
+        fields = ['role', 'department', 'date_of_joining', 'phone_number', 'address', 'next_of_kin', 'next_of_kin_phone', 'course', 'subject' ]
+        widgets ={ 
+            'date_of_joining' :forms.DateInput(attrs = {'placeholder':'mm/dd/yyyy', 'label':'Date of joining(e.g 12/28/2000)'}) 
+        }
+
+
+class ReportForm(forms.ModelForm):
+    class Meta:
+        model = Report
+        fields = ['report_file']
+

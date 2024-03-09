@@ -5,8 +5,8 @@ from .forms import ApplicationForm, SubjectForm, CourseForm
 from functools import wraps
 from django.http import HttpResponseForbidden, HttpResponseBadRequest
 from django.contrib.auth import authenticate, login, logout
-from .forms import CustomUserCreationForm, StudentForm, StudentForm2, NonStudentForm
-from . models import Student, Enrollment, Assignment, Attendance, Announcement, LibraryBook, BorrowedBook, Fee, Feedback, Course, CustomUser, NonStudent
+from .forms import CustomUserCreationForm, StudentForm, StudentForm2, NonStudentForm, ReportForm
+from . models import Student, Enrollment, Assignment, Attendance, Announcement, LibraryBook, BorrowedBook, Fee, Feedback, Course, CustomUser, NonStudent, Subject, Report
 from django .views import generic
 from django.contrib import messages
 from .decorators import hteacher_required, admin_required, teacher_required
@@ -18,8 +18,13 @@ from django.template.loader import render_to_string
 from django.utils.encoding import force_bytes, force_str
 from django.core.mail import EmailMessage
 from django.utils.html import strip_tags
+from PIL import Image
+import io
+import os
 import time
 from .tokens import account_activation_token
+
+
 
 def access_denied(request):
     return render(request, 'access_denied.html')
@@ -43,13 +48,27 @@ def register(request):
 
 def signup(request):
     if request.method == 'POST':
-        form = CustomUserCreationForm(request.POST)
+        form = CustomUserCreationForm(request.POST, request.FILES)
         username = request.POST.get('username')
         request.session['username']=username
         print(request.session['username'])
         if form.is_valid():
             user = form.save(commit=False)
             user.is_active = False  # Deactivate the user until email confirmation
+            # Convert and save the photo with the username as the filename
+            if 'photo' in request.FILES:            
+                user = form.save(commit=False)
+                # Convert and save the photo with the username as the filename
+                image = form.cleaned_data['photo']
+                image_extension = 'jpg'  # Set the image extension to jpg
+                image_io = io.BytesIO()
+                image = Image.open(image)
+                image = image.convert('RGB')  # Convert to RGB format if needed
+                image.save(image_io, format='JPEG')
+                
+                # Save the processed image with the username as filename
+                new_filename = f"{user.username}.{image_extension}"
+                user.photo.save(new_filename, image_io, save=True)
             user.save()
             
             # Send email confirmation
@@ -117,13 +136,27 @@ def register_non_student_2(request):
 
 def register_student(request):
     if request.method == 'POST':
-        form = StudentForm(request.POST)
+        form = StudentForm(request.POST, request.FILES)
         username = request.POST.get('username')
         request.session['username']=username
         print(request.session['username'])
         if form.is_valid():
             user = form.save(commit=False)
+            if 'photo' in request.FILES: 
+                # Convert and save the photo with the username as the filename
+                image = form.cleaned_data['photo']
+                image_extension = 'jpg'  # Set the image extension to jpg
+                image_io = io.BytesIO()
+                image = Image.open(image)
+                image = image.convert('RGB')  # Convert to RGB format if needed
+                image.save(image_io, format='JPEG')
+                
+                # Save the processed image with the username as filename
+                new_filename = f"{user.username}.{image_extension}"
+                user.photo.save(new_filename, image_io, save=True)
+                
             user.save()
+
             Student.objects.create(user=user)
             return redirect('register1')
     else:
@@ -160,12 +193,13 @@ def logout_view(request):
     logout(request)
     return redirect('login')
 
-def dashboard(request):
-    num_visits = request.session.get('num_visits', 0)
-    request.session['num_visits'] = num_visits + 1
-    num_visits = request.session['num_visits']
+class ReportCourseListView(generic.ListView):
+    model = Course
+    template_name = 'dashboard.html'
 
-    return render(request, 'dashboard.html', {'num_visits': num_visits})
+def dashboard(request):
+    courses = Course.objects.all()
+    return render(request, 'dashboard.html', {'courses': courses})
 
 def home(request):
     return render(request, 'home.html')
@@ -236,35 +270,55 @@ def account_info(request):
         {'label': 'Next of Kin', 'value': nonstudent.next_of_kin},
         {'label': "Next of Kin's Phone", 'value': nonstudent.next_of_kin_phone},
     ]
-
-
-    
     return render(request, 'account_info.html', { 'nonstudent_data':data, 'nonstudent':nonstudent})
 
-
+@login_required
 def student_dashboard(request):
     try:
         student = Student.objects.get(user=request.user)
-        enrollments = Enrollment.objects.filter(student=student)
-        assignments = Assignment.objects.filter(course__in=enrollments.values_list('course', flat=True))
-        attendance = Attendance.objects.filter(student=student)
-        announcements = Announcement.objects.all().order_by('-date')[:5]
-        borrowed_books = BorrowedBook.objects.filter(student=student)
-        fees = Fee.objects.filter(student=student)
-        feedbacks = Feedback.objects.filter(student=student)
-        
+        student = request.user.student
+        report = Report.objects.filter(student=student)      
     except Student.DoesNotExist:
-        messages.error(request, 'Student profile does not exist.')
-        return redirect('dashboard')
+        messages.error(request, 'Not available.')
+        return redirect('student_dashboard')
     
     context = {
         'student': student,
-        'enrollments': enrollments,
-        'assignments': assignments,
-        'attendance': attendance,
-        'announcements': announcements,
-        'borrowed_books': borrowed_books,
-        'fees': fees,
-        'feedbacks': feedbacks,
+        'report' : report
     }
     return render(request, 'student/dashboard.html', context)
+
+@login_required
+@teacher_required
+def teacher_dashboard(request):
+    return render(request, 'teacher_dashboard.html')
+
+
+@login_required
+def view_reports(request):
+    student = request.user.student
+    reports = Report.objects.filter(student=student)
+    return render(request, 'students/reports.html', {'reports': reports})
+
+
+def upload_reports(request, course_id):
+    students = Student.objects.filter(course_id=course_id)
+    forms = []
+
+    if request.method == 'POST':
+        for student in students:
+            form = ReportForm(request.POST, request.FILES, prefix=str(student.id))
+            if form.is_valid():
+                report = form.save(commit=False)
+                report.save()
+                student.report = report
+                student.save()
+            forms.append(form)
+        for i in forms:
+            print(i)
+    else:
+        forms = [ReportForm(prefix=str(student.id)) for student in students]
+
+    lists = zip(students, forms)
+
+    return render(request, 'admin/upload_reports.html', {'lists':lists})

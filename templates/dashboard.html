@@ -2,7 +2,19 @@
 {% block title %} Dashboard {% endblock %}
 {% block content %}
 <h2>Welcome to the Dashboard</h2>
-<p>Access Role: {% if user.user_type == 'headteacher' %}Headteacher <br><a href="{% url 'populate' %}">Continue</a>{% elif user.user_type == 'admin' %}Admin<br><a href="{% url 'populate' %}">Continue</a>{% elif user.user_type == 'teacher' %}Teacher<br><a href="{% url 'populate' %}">Continue</a>{% else %}Student <br><a href="{% url 'student_dashboard' %}">Continue</a>{% endif %}</p>
+<p>Access Role: {% if user.user_type == 'headteacher' %}Headteacher <br><a href="{% url 'populate' %}">Continue</a>
+    {% elif user.user_type == 'admin' %}Admin<br>
+    <a href="{% url 'populate' %}">Continue</a>
+    <ul>
+        {% for course in courses.all %}
+        <li><a href="{% url 'upload_reports' course.id %}"><button>{{course.name}}</button></a></li>
+        {% endfor %}
+    
+    </ul>
+    {% elif user.user_type == 'teacher' %}Teacher<br>
+        <a href="{% url 'populate' %}">Continue</a>
+
+        {% else %}Student <br><a href="{% url 'student_dashboard' %}">Continue</a>{% endif %}</p>
 <p> {{num_visits}}  </p>
 
 {% endblock %}

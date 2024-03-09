@@ -4,12 +4,21 @@ Register
 {% endblock %}
 {% block content %}
 
+<style>
+  .checkbox-inline {
+    display: inline-block;
+    margin-right: 10px; /* Adjust as needed */
+
+}
+
+</style>
+
 <form method="post">
   <h2>Add Information</h2> <br>
-  <h3> Name: {{username.user}} </h3>
+ <b>NAME:</b> {{username.user.first_name}}  {{username.user.last_name}} <br><br>
+ 
   {% csrf_token %}
   {{ form.as_p }}
   <button type="submit">Register</button>
 </form>
-
 {% endblock %}

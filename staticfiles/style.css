@@ -147,7 +147,15 @@ h2 {
 }
 
 form {
-    margin: 20px 400px; /* Centering the form horizontally */
+    margin: 20px 100px; /* Centering the form horizontally */
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  }
+
+  form .login-form {
+    margin: 20px 300px; /* Centering the form horizontally */
     padding: 20px;
     background-color: #f9f9f9;
     border-radius: 8px;
@@ -375,4 +383,37 @@ to {
         margin: 0 auto;
         max-width: 100%;
     }
+}
+
+.checkbox-inline {
+    display: inline-block;
+    margin-right: 10px; /* Adjust as needed */
+}
+
+
+table {
+    border-collapse: collapse;
+    width: 100%;
+}
+
+th, td {
+    border: 1px solid black;
+    padding: 1px;
+    text-align: left;
+}
+
+.table-style {
+    border-collapse: collapse;
+    width: 100%;
+}
+
+.table-style th, .table-style td {
+    border: none;
+    padding: 0 4px; /* Adjust padding as needed */
+    text-align: left;
+    height: 1px; /* Set the desired height */
+}
+
+.table-style th {
+    background-color: #f2f2f2;
 }

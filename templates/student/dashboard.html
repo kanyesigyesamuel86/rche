@@ -1,17 +1,38 @@
 <!-- dashboard.html -->
 {% extends 'base.html' %}
+{% load static %}
 {% block content %}
-<h1>Welcome, {{ student.user.first_name }} {{ student.user.last_name }}</h1>
+
+<style>
+  img {
+    width: 180px;
+    height: 180px;
+    border-radius: 50%;
+  }
+</style>
+
+<div class="about-content">
+
+  <h1>Welcome, {{ student.user.first_name }} {{ student.user.last_name }}</h1><br><br>
+{% if user.photo %}
+<img src="{{user.photo.url}}" alt="...">
+{% else  %}
+<img src="static 'images/user_logo.jpg' " alt="...">
+{% endif %}
+
+{% if report %}
+  <p><a href="{{ student.report.report_file.url }}" download ><Det>Download Report</Det>: </a></p>
+{% else %}
+  <p>No report found.</p>
+{% endif %} </p>
 <h2>Profile</h2>
 <p>Roll Number: {{ student.roll_number }}</p>
 <p>Phone Number: {{ student.phone_number }}</p>
 <p>Address: {{ student.address }}</p>
-
+<br><br>
 <h2>Courses</h2>
 <ul>
-  {% for enrollment in enrollments %}
-  <li>{{ enrollment.course.name }} - {{ enrollment.course.description }}</li>
-  {% endfor %}
+  <li>{{ student.course.name }} - {{student.course.description }}</li>
 </ul>
 
 <h2>Assignments</h2>
@@ -62,4 +83,5 @@
   <li>{{ feedback.content }} - {{ feedback.date }}</li>
   {% endfor %}
 </ul>
+</div>
 {% endblock %}

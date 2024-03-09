@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+{% block content %}
+<style>
+    .table-style {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .table-style th,
+    .table-style td {
+        border: 1px solid #ddd;
+        padding: 8px;
+        text-align: left;
+    }
+
+    .table-style tr:nth-child(even) {
+        background-color: #f2f2f2;
+    }
+</style>
+
+<div class="about-content">
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <table class="table-style">
+            <thead>
+                <tr>
+                    <th>Student No.</th>
+                    <th>First Name</th>
+                    <th>Last Name</th>
+                    <th>Report</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for student, form in lists %}
+                <tr>
+                    <td>{{ student.roll_number }}</td>
+                    <td>{{ student.user.first_name }}</td>
+                    <td>{{ student.user.last_name }}</td>
+                    <td>{{ form.report_file }}</td>
+                </tr>
+                {% endfor %}           </tbody>
+        </table>
+        <button type="submit">Upload</button>
+    </form>
+
+</div>
+
+{% endblock %}
