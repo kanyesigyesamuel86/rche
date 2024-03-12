@@ -1,107 +1,130 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="{% static 'style.css' %}" />
+  </head>
+  <style>
+    header ul {
+      float: right;
+    }
+    main {
+      margin-top: 40px;
+    }
 
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="{% static 'style.css' %}">
-    
-</head>
-<style>
+    .btns {
+      background-color: #007bff;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      border-style: solid;
+      width: 45px;
+      height: 20px;
+      align-items: center;
+      margin: 20px;
+      float: right;
+      display: inline;
+    }
 
-header {
-    background-color: #0e498b;
-    color: #fff;
-    height: 30px;
-}
-header ul {
-    float: right;
-    margin-bottom: 1px;
-}
+    .btns a {
+      color: white;
+    }
+    .btns:hover {
+      background-color: rgb(16, 96, 245);
+    }
+  </style>
 
+  <body>
+    <header class="navbar">
+      {% if user.is_authenticated %}
+      <ul>
+        <a href="/">Welcome</a>
+        <a href="{% url 'registration' %}">Register</a>
 
-    header  ul .apply {
-    border-radius: 5px;
-    border-style: solid;
-    border-color: rgb(10, 8, 8);
-    border-width: 2px; /* Set the border width to 1px */
-    padding: 2px 5px; 
-    background-color: rgb(48, 18, 14);
-}
-header  ul .apply:hover{
-    background-color: rgb(82, 52, 52);
-}
-
-</style>
-
-
-<body>
-
-    <header>
-        {% if user.is_authenticated %}
-            <ul><a href="/">Welcome</a>
-                <a href="{% url 'registration' %}">Register</a>
-                <a href="{% url 'logged_out' %}">Logout</a>
-                
-                {% if user.user_type == 'admin' %}
-                <a href="{% url 'dashboard' %}">Dashboard</a>
-                {%elif user.user_type == 'headteacher' %}
-                <a href="{% url 'populate' %}">Dashboard</a>
-                {%elif user.user_type == 'teacher' %}
-                <a href="{% url 'teacher_dashboard' %}">Dashboard</a>
-                {%else %}
-                <a href="{% url 'student_dashboard' %}">Dashboard</a>
-                {% endif %}
-
-                <a href="{% url 'course_list' %}" class="apply" >Apply</a>
-                <a href="{% url 'account_info' %}" class="account">
-                {% if user.photo %}
-                    <img src="{{ user.photo.url }}" alt="{{ user.username }}" style="width: 25px; height: 20px; border-radius: 50%; margin: 0;">
-                {% else %}
-                <img src="{% static 'images/user_logo.jpg' %}" alt="{{ user.username }}" style="width: 25px; height: 20px; border-radius: 50%; filter: brightness(60%);  ">
-                {% endif %}
-                
-                </a>
-                
-                
-
-            </ul>
-        {% else %}
-        <ul><a href="/">Welcome</a>
-            <a href="{% url 'login' %}">Login</a>
-            <a href="{% url 'registration' %}">Register</a>
-            <a href="{% url 'course_list' %}" class="apply">Apply</a>
-
-
-        </ul>
+        {% if user.user_type == 'admin' %}
+        <a href="{% url 'dashboard' %}">Dashboard</a>
+        {%elif user.user_type == 'headteacher' %}
+        <a href="{% url 'populate' %}">Dashboard</a>
+        {%elif user.user_type == 'teacher' %}
+        <a href="{% url 'teacher_dashboard' %}">Dashboard</a>
+        {%else %}
+        <a href="{% url 'student_dashboard' %}">Dashboard</a>
         {% endif %}
+
+        <a href="#">&#128489;</a>
+        <a href="{% url 'account_info' %}" class="account">
+          {% if user.photo %}
+          <img
+            src="{{ user.photo.url }}"
+            alt="{{ user.username }}"
+            style="width: 25px; height: 20px; border-radius: 50%; margin: 0"
+          />
+          {% else %}
+          <img
+            src="{% static 'images/user_logo.jpg' %}"
+            alt="{{ user.username }}"
+            style="
+              width: 25px;
+              height: 20px;
+              border-radius: 50%;
+              filter: brightness(60%);
+            "
+          />
+          {% endif %}
+        </a>
+      </ul>
+
+      {% else %}
+      <ul>
+        <a href="/">Welcome</a>
+        <a href="{% url 'registration' %}">Register</a>
+        <a href="#">&#128489;</a>
+      </ul>
+      {% endif %}
+
+      <div class="btns">
+          {% if user.is_authenticated %}
+          <ul>
+            <a href="{% url 'course_list' %}"> Apply</a>
+            <a href="{% url 'logged_out' %}">Logout</a>
+          </ul>
+
+          {% else %}
+          <ul>
+            <a href="{% url 'course_list' %}"> Apply</a>
+            <a href="{% url 'login' %}">Login</a>
+          </ul>
+          {% endif %}
+      </div>
     </header>
 
-    <main>
-        {% block content %}{% endblock %}
-    </main>
+    <main>{% block content %}{% endblock %}</main>
 
     <footer>
-        <div> <a href="#" class="btn">Get in Touch</a></div>
-        <br>
-        <a href="https://www.facebook.com/kanyesigye.samuel.54" target="_blank">
-            <img src="{% static 'images/facebook-icon.png' %}" alt="Facebook">
-        </a>
-        <a href="https://www.linkedin.com/in/kanyesigye-samuel-9420b6254/" target="_blank">
-            <img src="{% static 'images/linkedin-icon.png' %}" alt="Linkedin">
-        </a>
-        <a href="https://twitter.com/KanyesigyeSam11" target="_blank">
-            <img src="{% static 'images/twitter-icon.png' %}" alt="Twitter">
-        </a>
-        <a href="#" target="_blank">
-            <img src="{% static 'images/instagram-icon.png' %}" alt="Instagram">
-        </a>
-        
-        <p>&copy; 2024 Kanyesigye Samuel - All rights reserved.</p>
+      <div><a href="#" class="btn">Get in Touch</a></div>
+      <a href="tel: +256752425209">✆ +256752425209</a> <br />
+
+      <a href="https://www.facebook.com/kanyesigye.samuel.54" target="_blank">
+        <img src="{% static 'images/facebook-icon.png' %}" alt="Facebook" />
+      </a>
+      <a
+        href="https://www.linkedin.com/in/kanyesigye-samuel-9420b6254/"
+        target="_blank"
+      >
+        <img src="{% static 'images/linkedin-icon.png' %}" alt="Linkedin" />
+      </a>
+      <a href="https://twitter.com/KanyesigyeSam11" target="_blank">
+        <img src="{% static 'images/twitter-icon.png' %}" alt="Twitter" />
+      </a>
+      <a href="#" target="_blank">
+        <img src="{% static 'images/instagram-icon.png' %}" alt="Instagram" />
+      </a>
+
+      <p>&copy; 2024 Kanyesigye Samuel - All rights reserved.</p>
     </footer>
-
-</body>
-
+  </body>
 </html>

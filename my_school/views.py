@@ -1,12 +1,10 @@
 
 from django.shortcuts import render, redirect, get_object_or_404, HttpResponse
-from .models import Course, Application
-from .forms import ApplicationForm, SubjectForm, CourseForm
 from functools import wraps
 from django.http import HttpResponseForbidden, HttpResponseBadRequest
 from django.contrib.auth import authenticate, login, logout
-from .forms import CustomUserCreationForm, StudentForm, StudentForm2, NonStudentForm, ReportForm
-from . models import Student, Enrollment, Assignment, Attendance, Announcement, LibraryBook, BorrowedBook, Fee, Feedback, Course, CustomUser, NonStudent, Subject, Report
+from .forms import CustomUserCreationForm, StudentForm, StudentForm2, NonStudentForm, ReportForm, ApplicationReviewForm, Application, SubjectForm, CourseForm, ApplicationForm
+from . models import Student, Enrollment, Assignment, Attendance, Announcement, LibraryBook, BorrowedBook, Fee, Feedback, Course, CustomUser, NonStudent, Subject, Report, Application
 from django .views import generic
 from django.contrib import messages
 from .decorators import hteacher_required, admin_required, teacher_required
@@ -32,6 +30,9 @@ def access_denied(request):
 def registration(request):
     return render(request, 'registration.html')
 
+
+@login_required
+@admin_required
 def register(request):
     if request.method == 'POST':
         form = CustomUserCreationForm(request.POST)
@@ -46,6 +47,8 @@ def register(request):
         form = CustomUserCreationForm()
     return render(request, 'register.html', {'form': form})
 
+@login_required
+@admin_required
 def signup(request):
     if request.method == 'POST':
         form = CustomUserCreationForm(request.POST, request.FILES)
@@ -54,8 +57,7 @@ def signup(request):
         print(request.session['username'])
         if form.is_valid():
             user = form.save(commit=False)
-            user.is_active = False  # Deactivate the user until email confirmation
-            # Convert and save the photo with the username as the filename
+            user.is_active = False 
             if 'photo' in request.FILES:            
                 user = form.save(commit=False)
                 # Convert and save the photo with the username as the filename
@@ -116,6 +118,8 @@ def account_activation_complete(request):
     time.sleep(3)  # Pause for 3 seconds
     return render(request, 'account_activation_complete.html', {'firstname': firstname, 'message': message})
 
+@login_required
+@admin_required
 def register_non_student_2(request):
     username = request.session.get('username')
     print(username)
@@ -133,7 +137,8 @@ def register_non_student_2(request):
     return render(request, 'register1.html', {'form': form, 'username':user})
 
 
-
+@login_required
+@admin_required
 def register_student(request):
     if request.method == 'POST':
         form = StudentForm(request.POST, request.FILES)
@@ -163,6 +168,8 @@ def register_student(request):
         form = StudentForm()
     return render(request, 'register.html', {'form': form})
 
+@login_required
+@admin_required
 def register_student2(request):
     username = request.session.get('username')
     print(username)
@@ -250,27 +257,49 @@ def application_status(request, application_id):
     application = Application.objects.get(pk=application_id)
     return render(request, 'status.html', {'application': application})
 
-
+@login_required
 def account_info(request):
-    try:
-        nonstudent, created = NonStudent.objects.get_or_create(user=request.user)
-    except Student.DoesNotExist:
-        messages.error(request, 'Student profile does not exist.')
-        return redirect('dashboard')
-    
-    data = [
-        {'label': 'Position', 'value': nonstudent.role},
-        {'label': 'Department', 'value': nonstudent.department},
-        {'label': 'Qualifications', 'value': nonstudent.qualifications},
-        {'label': 'Classes', 'value': nonstudent.course.name},
-        {'label': 'Subjects', 'value': nonstudent.subject.name},
-        {'label': 'Date of Joining', 'value': nonstudent.date_of_joining},
-        {'label': 'Phone Number', 'value': nonstudent.phone_number},
-        {'label': 'Address', 'value': nonstudent.address},
-        {'label': 'Next of Kin', 'value': nonstudent.next_of_kin},
-        {'label': "Next of Kin's Phone", 'value': nonstudent.next_of_kin_phone},
-    ]
-    return render(request, 'account_info.html', { 'nonstudent_data':data, 'nonstudent':nonstudent})
+    data = []
+
+    if request.user.user_type == 'other':
+        try:
+            student, created = Student.objects.get_or_create(user=request.user)
+        except Student.DoesNotExist:
+            messages.error(request, 'Student profile does not exist.')
+            return redirect('dashboard')
+        
+        data = [
+            {'label': 'Student Number', 'value': student.user.username},
+            {'label': 'Roll Number', 'value': student.roll_number},
+            {'label': 'Class', 'value': student.course},
+            {'label': 'Classe', 'value': student.subject.name},
+            {'label': 'Subjects', 'value': student.subject.name},
+            {'label': 'Phone Number', 'value': student.phone_number},
+            {'label': 'Address', 'value': student.address},
+      
+        ]
+    else:
+
+
+        try:
+            nonstudent, created = NonStudent.objects.get_or_create(user=request.user)
+        except Student.DoesNotExist:
+            messages.error(request, 'Student profile does not exist.')
+            return redirect('dashboard')
+        
+        data = [
+            {'label': 'Position', 'value': nonstudent.role},
+            {'label': 'Department', 'value': nonstudent.department},
+            {'label': 'Qualifications', 'value': nonstudent.qualifications},
+            {'label': 'Classes', 'value': nonstudent.course.name},
+            {'label': 'Subjects', 'value': nonstudent.subject.name},
+            {'label': 'Date of Joining', 'value': nonstudent.date_of_joining},
+            {'label': 'Phone Number', 'value': nonstudent.phone_number},
+            {'label': 'Address', 'value': nonstudent.address},
+            {'label': 'Next of Kin', 'value': nonstudent.next_of_kin},
+            {'label': "Next of Kin's Phone", 'value': nonstudent.next_of_kin_phone},
+        ]
+    return render(request, 'account_info.html', { 'nonstudent_data':data})
 
 @login_required
 def student_dashboard(request):
@@ -280,7 +309,7 @@ def student_dashboard(request):
         report = Report.objects.filter(student=student)      
     except Student.DoesNotExist:
         messages.error(request, 'Not available.')
-        return redirect('student_dashboard')
+        return redirect('home')
     
     context = {
         'student': student,
@@ -300,7 +329,8 @@ def view_reports(request):
     reports = Report.objects.filter(student=student)
     return render(request, 'students/reports.html', {'reports': reports})
 
-
+@login_required
+@admin_required
 def upload_reports(request, course_id):
     students = Student.objects.filter(course_id=course_id)
     forms = []
@@ -322,3 +352,22 @@ def upload_reports(request, course_id):
     lists = zip(students, forms)
 
     return render(request, 'admin/upload_reports.html', {'lists':lists})
+
+@login_required
+#@admin_required
+def applications_review(request):
+    applications = Application.objects.all()
+    forms = []
+    if request.method == 'POST':
+        for application in applications:
+            form = ApplicationReviewForm(request.POST, prefix=str(application.id))
+            if form.is_valid():
+                report = form.save(commit=False)
+                application.status = report.status
+                application.save()
+            forms.append(form)
+    else:
+        forms = [ApplicationReviewForm(prefix=str(application.id)) for application in applications]
+
+    lists = zip(applications, forms)
+    return render(request, 'admin/applications_review.html', {'lists':lists})

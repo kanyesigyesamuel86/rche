@@ -13,12 +13,15 @@ Register
 
 </style>
 
-<form method="post">
-  <h2>Add Information</h2> <br>
- <b>NAME:</b> {{username.user.first_name}}  {{username.user.last_name}} <br><br>
- 
-  {% csrf_token %}
-  {{ form.as_p }}
-  <button type="submit">Register</button>
-</form>
+<div class="about-content">
+  <form method="post">
+    <h2>Add Information</h2> <br>
+   <b>NAME:</b> {{username.user.first_name}}  {{username.user.last_name}} <br><br>
+   
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Register</button>
+  </form>
+</div>
+
 {% endblock %}

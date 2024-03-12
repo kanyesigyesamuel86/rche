@@ -26,6 +26,7 @@ urlpatterns = [
     path('teacher_dashboard', views.teacher_dashboard, name = 'teacher_dashboard'),
     path('account_info', views.account_info, name = 'account_info'),
     path('upload_reports/<int:course_id>/', views.upload_reports, name='upload_reports'),
+    path('applications_review', views.applications_review, name = 'applications_review')
 
 
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

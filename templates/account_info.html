@@ -21,12 +21,14 @@ Register
 </style>
 
 <div class="about-content">
-    <h2>Hi, {{nonstudent.user}}  </h2> <br><br>
+    <h2>Hi, {{user.username}}  </h2> <br><br>
     <p>
-       <b>Name:</b> {{nonstudent.user.first_name}}  {{nonstudent.user.last_name}} <br>
-        <b>Email: </b>{{nonstudent.user.email}}
+       <b>Name:</b> {{user.first_name}}  {{user.last_name}} <br>
+       {% if user.email %}
+        <b>Email: </b>{{user.email}}
+        {% endif %}
     </p>
-
+{% if nonstudent_data %}
     <table>
         <tbody>
             {% for item in nonstudent_data %}
@@ -39,6 +41,7 @@ Register
           {% endfor %}
         </tbody>
     </table>
+    {% endif %}
 </div>
 
 

@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+{% load custom_filters %}
+
+{% block title %}
+{% endblock %}
+{% block content %}
+<style>
+    .choice {
+        display: flex;
+    }
+</style>
+
+<div class="about-content">
+    <h2>Received Applications</h2><br>
+<form action="" method="post">
+    {% csrf_token %}
+    <table>
+        <th>Name</th><th>Class</th> <th>Documents</th> <th>Status</th> <th>Update</th>
+        {% for application, form in lists %}      
+    
+        <tr>
+            <td>{{application}} </td><td>{{application.id}}</td><td>{% if application.document_name %}
+                <a href="{{ application.document_name.url }}">{{ application.document_name.name|basename  }}</a>
+                {% else %}
+                No document uploaded
+                {% endif %}</td> <td>{{application.status}}</td> <td> <div class="choice">{{form.status}}</div></td>
+        </tr>
+        
+        {% endfor %}
+    </table>
+   
+    <input type="submit" value="Update" class="btn">
+</form>
+
+
+</div>
+{% endblock %}

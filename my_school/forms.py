@@ -1,6 +1,8 @@
 from django import forms
 from .models import Application, Student, Course, Subject, CustomUser, NonStudent, Report
 from django.contrib.auth.forms import UserCreationForm
+from django_countries.fields import CountryField
+from cities_light.models import Country, City
 
 
 
@@ -12,19 +14,25 @@ class CustomUserCreationForm(UserCreationForm):
 
 
 class ApplicationForm(forms.ModelForm):
-
     class Meta:
         model = Application
-        fields = [ 'first_name', 'last_name', 'email', 'phone_number', 'address', 'city_or_District', 'country', 'date_of_birth', 'gender', 'document_name']
+        fields = [ 'first_name', 'last_name', 'email', 'phone_number', 'address', 'country' , 'city_or_district', 'date_of_birth', 'gender', 'document_name']
  
         widgets = {
            'document_name': forms.FileInput(attrs={'accept': 'application/pdf'}),
+           'date_of_birth': forms.DateInput(attrs={'type': 'date'}),
       }
     def __init__(self, *args, **kwargs):
      
        super().__init__(*args, **kwargs)
        self.fields['document_name'].help_text = "PDF format only. Maximum file size: 10MB."
 
+class ApplicationReviewForm(forms.ModelForm):
+    class Meta:
+        model = Application
+        fields = [ 'status']
+
+ 
 
 class CourseForm(forms.ModelForm):
     class Meta:

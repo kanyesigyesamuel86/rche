@@ -42,6 +42,9 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'my_school',
     'taggit',
+    'django_countries',
+     'cities_light',
+     'multiselectfield',
 ]
 
 MIDDLEWARE = [

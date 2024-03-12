@@ -3,6 +3,12 @@ from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.urls import reverse
 from taggit.managers import TaggableManager
+from django.core.validators import RegexValidator
+from cities_light.models import Country, City
+from django.db.models.signals import pre_save
+from django.dispatch import receiver
+from django.core.mail import send_mail
+
 
 
 class CustomUser(AbstractUser):
@@ -136,19 +142,37 @@ class Application(models.Model):
     first_name = models.CharField(max_length=100)
     last_name = models.CharField(max_length=100)
     email = models.EmailField()
-    phone_number = models.CharField(max_length=15)
+    phone_number = models.CharField(max_length=15, validators=[RegexValidator(r'^\+?1?\d{9,15}$')])
     address = models.CharField(max_length=100)
-    city_or_District = models.CharField(max_length=100)
-    country = models.CharField(max_length=100)
-    date_of_birth = models.DateField()
+    city_or_district = models.CharField(max_length=100)
+    country = models.ForeignKey(Country, on_delete=models.SET_NULL, null=True, blank=True)
+    city = models.ForeignKey(City, on_delete=models.SET_NULL, null=True, blank=True)
+    date_of_birth = models.DateField(null=True)
     gender_choices = (
-        ('', 'Select Gender'),
         ('M', 'Male'),
         ('F', 'Female'),
         ('O', 'Other'),
     )
     gender = models.CharField(max_length=10, choices=gender_choices, blank=True, null=True)
-    document_name = models.FileField(upload_to='documents/', max_length=254, default='')
+    document_name = models.FileField(upload_to='documents/', max_length=254, null=True, blank=True)
+    STATUS_CHOICES = (
+        ('review', 'Under Review'),
+        ('admitted', 'Admitted'),
+        ('completed', 'Completed'),
+    )
+    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='review', null=True, blank=True)
 
     def __str__(self):
-        return f"{self.first_name} "
+        return f"{self.first_name} {self.last_name}"
+    
+@receiver(pre_save, sender=Application)
+def send_email_on_admission(sender, instance, **kwargs):
+    if instance.status == 'admitted':
+        send_mail(
+            'Congratulations!',
+            'You have been admitted.',
+            'from@example.com',
+            [instance.email],
+            fail_silently=False,
+        )
+        instance.status = 'completed'
