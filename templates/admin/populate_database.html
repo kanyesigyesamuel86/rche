@@ -4,7 +4,8 @@ Populate Database
 {% endblock %}
 
 {% block content %}
-<h1>Populate Database</h1>
+<div class="about-content">
+    <h1>Populate Database</h1>
 <form method="post">
     {% csrf_token %}
     <h2>Add Class</h2>
@@ -19,6 +20,7 @@ Populate Database
     {{ subject_form.as_p }}
     <button type="submit" name="add_subject">Submit</button>
 </form>
+</div>
 
 {% endblock %}
 
