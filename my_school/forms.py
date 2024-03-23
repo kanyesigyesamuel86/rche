@@ -43,7 +43,7 @@ class CourseForm(forms.ModelForm):
 class SubjectForm(forms.ModelForm):
     class Meta:
         model = Subject
-        fields = ['name', 'description']
+        fields = ['name']
 
 class StudentForm(UserCreationForm):
     class Meta(UserCreationForm.Meta):

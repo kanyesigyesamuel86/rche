@@ -1,24 +1,36 @@
 {% extends 'base.html' %}
 {% block title %} Dashboard {% endblock %}
 {% block content %}
-<div class="about-content">
-    <h2>Welcome to the Dashboard</h2>
-<p>Access Role: {% if user.user_type == 'headteacher' %}Headteacher <br><a href="{% url 'populate' %}">Continue</a>
-    {% elif user.user_type == 'admin' %}Admin<br>
-    <a href="{% url 'populate' %}">Continue</a>
-    <a href="{% url 'applications_review' %}">Applications</a>
-    <ul>
-        {% for course in courses.all %}
-        <li><a href="{% url 'upload_reports' course.id %}"><button>{{course.name}}</button></a></li>
-        {% endfor %}
-    
-    </ul>
-    {% elif user.user_type == 'teacher' %}Teacher<br>
-        <a href="{% url 'populate' %}">Continue</a>
+<style>
+    h3 a {
+        border-style: solid;
+        border-width: 1.5px;
+        border-radius: 3px;
+        padding: 1px;
+    }
 
-        {% else %}Student <br><a href="{% url 'student_dashboard' %}">Continue</a>{% endif %}</p>
-<p> {{num_visits}}  </p>
+    h3 a:current{
+        color: maroon;
+
+    }
+    
+</style>
+
+<div class="about-content">
+<p> {% if user.user_type == 'admin' %}
+    <h3>
+        <a href="{% url 'populate' %}">Continue</a>
+        <a href="{% url 'applications_review' %}">Applications</a>
+        <a href="{% url 'reports' %}">Reports</a>
+        <a href="{% url 'registration' %}">Register</a>
+    </h3><br><br>
+    Admin<br>
+    {% block admin %}
+    <h2>Welcome to the Dashboard</h2>
+    {%  endblock %}
+{% endif %}
 
 </div>
+
 {% endblock %}
 

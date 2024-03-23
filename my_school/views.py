@@ -1,4 +1,5 @@
-
+import matplotlib
+matplotlib.use('Agg')
 from django.shortcuts import render, redirect, get_object_or_404, HttpResponse
 from functools import wraps
 from django.http import HttpResponseForbidden, HttpResponseBadRequest
@@ -21,6 +22,10 @@ import io
 import os
 import time
 from .tokens import account_activation_token
+import random
+import matplotlib.pyplot as plt
+from io import BytesIO
+import base64
 
 
 
@@ -204,9 +209,17 @@ class ReportCourseListView(generic.ListView):
     model = Course
     template_name = 'dashboard.html'
 
+@login_required
+@admin_required
 def dashboard(request):
+    return render(request, 'dashboard.html')
+
+@login_required
+@admin_required
+def reports(request):
     courses = Course.objects.all()
-    return render(request, 'dashboard.html', {'courses': courses})
+    return render(request, 'admin/reports.html', {'courses': courses})
+
 
 def home(request):
     return render(request, 'home.html')
@@ -245,7 +258,9 @@ def apply_course(request, course_id):
         if form.is_valid():
             application = form.save(commit=False)
             application.course = course  # Assign the course to the application
+            application.status = 'review'
             application.save()
+            
             my_message =  'Your application has been submitted for review'
             return render(request, 'success.html', {'response_message':my_message})
     else:
@@ -320,8 +335,52 @@ def student_dashboard(request):
 @login_required
 @teacher_required
 def teacher_dashboard(request):
-    return render(request, 'teacher_dashboard.html')
+    count_classes = 0
+    count_subjects = 0
+    count_students = 0
 
+    class_names = []
+    average_scores = []
+
+    teacher = NonStudent.objects.get(user=request.user)
+    for course in teacher.course.all():
+        count_classes += 1
+        class_names.append(course.name)
+        average_scores.append(random.randint(50,100))
+        students = Student.objects.filter(course= course)
+        count_students+= len(students)
+    print('graphs:', class_names, average_scores)
+
+    plt.figure(figsize=(5,3))
+    plt.bar(class_names, average_scores, width=0.2)
+    plt.xlabel('Class')
+    plt.ylabel('Percentage(%)')
+    plt.title('Average Performance')
+    plt.xticks(rotation=45)
+    plt.tight_layout()
+
+    # Convert the plot to a base64 image
+    buffer = BytesIO()
+    plt.savefig(buffer, format='png')
+    buffer.seek(0)
+    image_png = buffer.getvalue()
+    buffer.close()
+    graphic = base64.b64encode(image_png).decode('utf-8')
+    plt.close()   
+
+    for subject in teacher.subject.all():
+        count_subjects += 1
+
+    list = zip(class_names, average_scores)
+    context = {
+        'teacher': teacher,
+        'count_classes': count_classes,
+        'count_subjects': count_subjects,
+        'count_students': count_students,
+        'list': list,
+        'graphic': graphic,
+    }
+    return render(request, 'teacher/teacher_dashboard.html', context)
 
 @login_required
 def view_reports(request):
@@ -356,15 +415,16 @@ def upload_reports(request, course_id):
 @login_required
 #@admin_required
 def applications_review(request):
-    applications = Application.objects.all()
+    applications = Application.objects.exclude(status = 'completed')
     forms = []
     if request.method == 'POST':
         for application in applications:
             form = ApplicationReviewForm(request.POST, prefix=str(application.id))
             if form.is_valid():
                 report = form.save(commit=False)
-                application.status = report.status
-                application.save()
+                if report.status is not None and report.status != application.status:
+                    application.status = report.status
+                    application.save()
             forms.append(form)
     else:
         forms = [ApplicationReviewForm(prefix=str(application.id)) for application in applications]

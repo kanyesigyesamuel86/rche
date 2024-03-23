@@ -6,6 +6,34 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="{% static 'style.css' %}" />
+    <link
+      rel="stylesheet"
+      href="https://cdn-uicons.flaticon.com/2.2.0/uicons-bold-rounded/css/uicons-bold-rounded.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn-uicons.flaticon.com/2.2.0/uicons-solid-rounded/css/uicons-solid-rounded.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn-uicons.flaticon.com/2.2.0/uicons-solid-rounded/css/uicons-solid-rounded.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn-uicons.flaticon.com/2.2.0/uicons-solid-rounded/css/uicons-solid-rounded.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn-uicons.flaticon.com/2.2.0/uicons-regular-rounded/css/uicons-regular-rounded.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn-uicons.flaticon.com/2.2.0/uicons-solid-rounded/css/uicons-solid-rounded.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn-uicons.flaticon.com/2.2.0/uicons-solid-rounded/css/uicons-solid-rounded.css"
+    />
   </head>
   <style>
     header ul {
@@ -14,27 +42,47 @@
     main {
       margin-top: 40px;
     }
+    .parent {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: end;
+    }
 
-    .btns {
-      background-color: #007bff;
+    .header-btns {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .btns1 {
+      background-color: rgb(114, 12, 12);
+      color: white;
+      text-decoration: none;
+      transition: color 0.3s ease; /* Smooth transition effect for color change */
       color: #fff;
       border: none;
-      border-radius: 5px;
+      border-radius: 3px;
       cursor: pointer;
       border-style: solid;
-      width: 45px;
-      height: 20px;
-      align-items: center;
-      margin: 20px;
-      float: right;
-      display: inline;
+      border-width: 1.8px;
+      padding: 2px;
     }
-
-    .btns a {
+    .btns2 {
+      background-color: blue;
       color: white;
+      text-decoration: none;
+      transition: color 0.3s ease; /* Smooth transition effect for color change */
+      color: #fff;
+      border: none;
+      border-radius: 3px;
+      cursor: pointer;
+      border-style: solid;
+      border-width: 1.8px;
+      padding: 2px;
     }
-    .btns:hover {
-      background-color: rgb(16, 96, 245);
+    .header-btns a:hover {
+      background-color: rgb(43, 101, 207);
     }
   </style>
 
@@ -54,7 +102,6 @@
         {% endif %}
         <a href="#">About</a>
         <a href="#">News</a>
-        <a href="{% url 'registration' %}">Register</a>
 
         <a href="#">&#128489;</a>
         <a href="{% url 'account_info' %}" class="account">
@@ -84,32 +131,37 @@
         <a href="/">Welcome</a>
         <a href="#">About</a>
         <a href="#">News</a>
-        <a href="{% url 'registration' %}">Register</a>
         <a href="#">&#128489;</a>
       </ul>
       {% endif %}
 
-      <div class="btns">
-          {% if user.is_authenticated %}
-          <ul>
-            <a href="{% url 'course_list' %}"> Apply</a>
-            <a href="{% url 'logged_out' %}">Logout</a>
-          </ul>
+      <div class="parent">
+        {% if user.is_authenticated %}
+        <ul class="header-btns">
+          <a href="{% url 'course_list' %}" class="btns1"> Apply</a>
+          <a href="{% url 'logged_out' %}" class="btns2">Logout</a>
+        </ul>
 
-          {% else %}
-          <ul>
-            <a href="{% url 'course_list' %}"> Apply</a>
-            <a href="{% url 'login' %}">Login</a>
-          </ul>
-          {% endif %}
+        {% else %}
+        <ul class="header-btns">
+          <a href="{% url 'course_list' %}" class="btns1"> Apply</a>
+          <a href="{% url 'login' %}" class="btns2">Login</a>
+        </ul>
+        {% endif %}
       </div>
     </header>
 
-    <main>{% block content %}{% endblock %}</main>
+    <main>
+      {% block content %} {% if breadcrumbs %}
+      <div class="container">
+        {% include "dynamic_breadcrumbs/breadcrumbs.html" with
+        breadcrumbs=breadcrumbs%}
+      </div>
+      {% endif %} {% endblock %}
+    </main>
 
     <footer>
       <div><a href="#" class="btn">Get in Touch</a></div>
-      <a href="tel: +256752425209">✆ +256752425209</a> <br />
 
       <a href="https://www.facebook.com/kanyesigye.samuel.54" target="_blank">
         <img src="{% static 'images/facebook-icon.png' %}" alt="Facebook" />

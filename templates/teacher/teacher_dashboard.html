@@ -1,0 +1,88 @@
+{% extends 'base.html' %}
+{% block title %} Dashboard {% endblock %}
+{% block content %}
+
+<style>
+
+
+.about-content {
+    width: 80%;
+    padding:5px 10px 2px 15%;
+
+}
+
+</style>
+<div class="dashboard">
+    <div class="side_bar" >
+        <h4>
+            <ul>
+                <li><a href="#"> <i class="fi fi-br-apps-add"> </i> Dashboard</a></li>
+                <li><a href="#"> <i class="fi fi-sr-graduation-cap">  </i> My Classes</a></li>
+                <li><a href="#"> <i class="fi fi-sr-note"></i> My Assignments</a></li>
+                <li><a href="#"><i class="fi fi-sr-calendar-days"> </i>Calendar</a></li>
+                <li><a href="#"><i class="fi fi-rr-user"></i> My Account</a></li>
+            </ul>
+        </h4>
+    </div>
+
+<div class="about-content">
+        {% if user.user_type == 'teacher' %} 
+        <h2>Welcome, {{user.first_name}}</h2> <br>
+        <div class="summary">
+            <div class="summary-part">
+                <i class="fi fi-sr-users"></i>
+                <h5>Total Students <br><br>{{count_students}}</h5>
+            </div>
+            <div class="summary-part">
+                <i class="fi fi-sr-graduation-cap"> 
+                </i> <h5>Total classes <br><br>{{count_classes}}</h5>
+                </div>
+            <div class="summary-part"> <i class="fi fi-sr-books"></i> <h5>Total Subjects <br><br>{{count_subjects}}</h5>
+                
+            </div>
+            <div class="summary-part-graph">
+
+                <img src="data:image/png;base64,{{ graphic }}" alt="Bar Graph">
+                <div class="stats">
+                    <h3>Average</h3>
+                    {% for class_name, average in list %}
+                    {{class_name}}: {{average}}% <br>
+                    {% endfor %} <br>
+
+                    <h3>Passing rate</h3>
+                    {% for class, average_score in list %}
+                    {{class}}: {{average_score}} <br>
+                    {% endfor %} <br>
+
+                </div>
+            </div>
+        </div><br><br>
+<div class="class-section">
+    <h2>My Classes</h2> <br>
+    <div class="my_classes">
+        {% for course in teacher.course.all %}
+            <a href="{% url 'class_details' course_id=course.id %}">
+                <div class="my_class">
+                <h4>{{ course.name }} </h4><br>
+                {{ course.description}}
+                {% for subject in course.subject.all %}
+                    {% if subject in teacher_instance.subject.all %}
+                    {{subject.name}}
+                    {% endif %}
+                {% endfor  %}
+            </div>
+            </a>
+    
+    
+    
+        {% endfor %}
+    </div>
+</div>
+    
+    {% endif %}</p>
+    
+
+</div>
+</div>
+
+{% endblock %}

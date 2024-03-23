@@ -7,7 +7,7 @@ from django.core.validators import RegexValidator
 from cities_light.models import Country, City
 from django.db.models.signals import pre_save
 from django.dispatch import receiver
-from django.core.mail import send_mail
+from django.core.mail import send_mail, EmailMessage
 
 
 
@@ -35,9 +35,17 @@ class Feedback(models.Model):
     date = models.DateField(auto_now_add=True)
 
 
+class Subject(models.Model):
+    name = models.CharField(max_length=100)
+    announcement = models.ManyToManyField(Announcement)
+    tags = TaggableManager()
+    def __str__(self):
+        return self.name
+    
 class Course(models.Model):
     name = models.CharField(max_length=100)
     description = models.TextField(default='')
+    subject = models.ManyToManyField(Subject)
     announcement = models.ManyToManyField(Announcement)
 
     def __str__(self):
@@ -45,14 +53,6 @@ class Course(models.Model):
     
     def get_absolute_url(self):
         return reverse('course-detail', kwargs={'pk': self.pk})
-
-class Subject(models.Model):
-    name = models.CharField(max_length=100)
-    description = models.TextField(default='')
-    announcement = models.ManyToManyField(Announcement)
-    tags = TaggableManager()
-    def __str__(self):
-        return self.name
 
 class Enrollment(models.Model):
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
@@ -160,7 +160,7 @@ class Application(models.Model):
         ('admitted', 'Admitted'),
         ('completed', 'Completed'),
     )
-    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='review', null=True, blank=True)
+    status = models.CharField(max_length=10, choices=STATUS_CHOICES, null=True, blank=True)
 
     def __str__(self):
         return f"{self.first_name} {self.last_name}"
@@ -168,11 +168,13 @@ class Application(models.Model):
 @receiver(pre_save, sender=Application)
 def send_email_on_admission(sender, instance, **kwargs):
     if instance.status == 'admitted':
-        send_mail(
-            'Congratulations!',
-            'You have been admitted.',
-            'from@example.com',
+        email = EmailMessage(
+            "Admission to Ryakasinga CHE",
+            "Congratulations! \nYou have been admitted",
+            " 'Ryakasinga CHE' <info.ryakasinga@gmail.com>",
             [instance.email],
-            fail_silently=False,
+            reply_to=["kanyesigyesamuel86@gmail.com"],
+            headers={"Message-ID": "foo"},
         )
+        email.send()
         instance.status = 'completed'

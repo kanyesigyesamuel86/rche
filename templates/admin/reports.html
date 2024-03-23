@@ -1,0 +1,12 @@
+{% extends 'dashboard.html' %}
+{% block title %}
+Reports
+{% endblock %}
+{% block admin %}
+    <ul>
+        {% for course in courses.all %}
+    <a href="{% url 'upload_reports' course.id %}"><button type="submit">{{course.name}}</button></a>
+        {% endfor %}
+    
+    </ul>
+{% endblock %}
