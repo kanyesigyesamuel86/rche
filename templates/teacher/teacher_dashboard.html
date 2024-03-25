@@ -4,12 +4,73 @@
 
 <style>
 
+.side_bar {
+    width: 15%;
+    background-color: rgb(79, 79, 250);
+    margin-top: 15px;
+    left: 0;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    position: fixed;
+    height: 100%;
+    z-index: 1000;
+}
+
 
 .about-content {
     width: 80%;
     padding:5px 10px 2px 15%;
 
 }
+
+.top-content {
+    display: flex;
+    gap: 40%;
+    margin-bottom: 20px;
+}
+
+.search-box {
+    padding-right: 0;
+}
+
+.search-form {
+    display: flex;
+    gap: 0;
+    align-items: center; 
+    padding: 0;/* Align items vertically */
+    background-color: white;
+    border-radius: 20px;
+    height: 30px;
+    width: 200px;
+}
+
+.search-input {
+    flex: 1; /* Take up remaining space */
+    font-size: 14px;
+    border: none;
+    border-radius: 20px;
+    padding: 0 5px;
+    align-items: center;
+    margin: 0;
+}
+
+.search-results {
+    z-index: 999;
+    box-shadow: 0 0 10px rgba(14, 13, 14, 0.87);
+    position: absolute;
+    background-color: whitesmoke;
+    min-width: 200px;
+    min-height: 20px;
+    padding: 10px;
+    align-items: center;
+    text-align: center;
+    font-size: 10px;
+    font-weight: bold;
+    float: right;
+    right: 10px;
+    border-radius: 5px;
+}
+
 
 </style>
 <div class="dashboard">
@@ -27,7 +88,62 @@
 
 <div class="about-content">
         {% if user.user_type == 'teacher' %} 
-        <h2>Welcome, {{user.first_name}}</h2> <br>
+        <div class="top-content">
+            <div><h2>Welcome, {{user.first_name}}</h2>  </div>
+            <div class="search-box">
+                <form method="GET" action="{% url 'teacher_dashboard' %}" class="search-form">
+                    <input type="text" name="q" id="searchInput" class="search-input" placeholder="Search subjects...">
+                    <button type="submit" class="search-button" style=" background-color: white; color: black; flex: 1;
+                    font-size: 14px;
+                    border: none;
+                    margin: 0;
+                    border-radius: 20px;
+                    padding: 3px 10px 0 0;
+                    width: 5%;
+                    align-items: center;"><i class="fi fi-br-search"></i></button>
+                </form>
+
+            {% if query %}
+            <div class="search-results">
+            {% if filtered_names %}
+            <i>Search results:</i><br><br>
+            Classes:
+            {% for course in teacher.course.all %}
+            {% if course.name in filtered_names %}
+                <a href="{% url 'class_details' course_id=course.id %}" 
+                style="border-style: solid;
+                border-radius: 5px;
+                border-width: 1px;
+                margin: 2px;
+
+                ">
+                    {{ course.name }}
+                </a>
+                {% endif %}
+            {% endfor %} <br><br>
+            Subjects:
+
+            {% for course in teacher.subject.all %}
+            {% if course.name in filtered_names %}
+                <a href="{% url 'class_details' course_id=course.id %}" 
+                style="border-style: solid;
+                border-radius: 5px;
+                border-width: 1px;
+                margin: 2px;
+
+                ">
+                    {{ course.name }}
+                </a>
+                {% endif %}
+            {% endfor %}
+            {% else %}
+                No matching results...
+            {% endif %}
+             </div>  
+             {% endif %}  
+            </div>
+        </div>
+
         <div class="summary">
             <div class="summary-part">
                 <i class="fi fi-sr-users"></i>
@@ -72,16 +188,11 @@
                 {% endfor  %}
             </div>
             </a>
-    
-    
-    
         {% endfor %}
     </div>
 </div>
     
     {% endif %}</p>
-    
-
 </div>
 </div>
 

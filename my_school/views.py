@@ -341,6 +341,7 @@ def teacher_dashboard(request):
 
     class_names = []
     average_scores = []
+    query = request.GET.get('q')
 
     teacher = NonStudent.objects.get(user=request.user)
     for course in teacher.course.all():
@@ -371,7 +372,19 @@ def teacher_dashboard(request):
     for subject in teacher.subject.all():
         count_subjects += 1
 
+
+    filtered_names = []
+    if query and  query != '':
+        for name in class_names:
+            if query.lower() in name.lower():
+                filtered_names.append(name)
+        for subject in teacher.subject.all():
+            print(subject.name)
+            if query.lower() in subject.name.lower():
+                filtered_names.append(subject.name)
+        print(class_names)
     list = zip(class_names, average_scores)
+
     context = {
         'teacher': teacher,
         'count_classes': count_classes,
@@ -379,6 +392,8 @@ def teacher_dashboard(request):
         'count_students': count_students,
         'list': list,
         'graphic': graphic,
+        'filtered_names':filtered_names,
+        'query': query
     }
     return render(request, 'teacher/teacher_dashboard.html', context)
 

@@ -30,7 +30,6 @@ body {
 }
 
 
-
 .profile-photo-container {
     display: flex;
     flex-direction: column;
@@ -56,8 +55,7 @@ h1, p, .btn a {
 }
 
 
-
-    header  ul .apply {
+header  ul .apply {
     border-radius: 5px;
     border-style: solid;
     border-color: rgb(10, 8, 8);
@@ -486,16 +484,7 @@ h3 a {
 
 }
 
-.side_bar {
-    width: 15%;
-    background-color: rgb(79, 79, 250);
-    margin-top: 30px;
-    border-radius: 5px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    position: fixed;
-    height: 80%;
-    z-index: 1000;
-}
+
 
 
 .summary {
