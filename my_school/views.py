@@ -326,17 +326,15 @@ def student_dashboard(request):
         messages.error(request, 'Not available.')
         return redirect('home')
     print(query)
-    if query == 'calendar':
-        result = calendar_context(request)
     
     context = {
         'student': student,
         'report' : report,
-        'calendar_result': result,
     }
     return render(request, 'student/dashboard.html', context)
 
 def calendar_context(request):
+    add_event = request.GET.get('add_event')
     now = datetime.now()
     year = request.GET.get('year', now.year)
     month = request.GET.get('month', now.month)
@@ -357,44 +355,7 @@ def calendar_context(request):
     weekdays = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun' ]
     months = ['', 'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
 
-    # Assuming events is a list of events for the month
-    events = [
-        {'day': 1, 'title': 'Event 1'},
-        {'day': 15, 'title': 'Event 2'},
-        # Add more events as needed
-    ]
-    print(next_year, next_month, now, year, month)
-
-    return {
-        'year': year,
-        'month': months[month],
-        'calendar': cal,
-        'events': events,
-        'prev_year': prev_year,
-        'prev_month': prev_month,
-        'next_year': next_year,
-        'next_month': next_month,
-        'weekdays': weekdays
-    }
-
-
-
-@login_required
-@admin_required
-def dashboard(request):
-    query = request.GET.get('q')
-    add_event = request.GET.get('add_event')
-    result = None
-
-    count_classes = Course.objects.count()
-    count_students = Student.objects.count()
-    count_staff = NonStudent.objects.count()
-
-    if query == 'calendar':
-        result = calendar_context(request)
-        events = Event.objects.all()
-        print(events)
-    
+    events = Event.objects.all()
     form = None
     if add_event == 'add-event':
         if request.method == 'POST':
@@ -404,13 +365,50 @@ def dashboard(request):
         else:
             form = EventForm()
 
+    
+    print(events)
+
+    print('TEST:',next_year, next_month, now, year, month)
+
+    context =  {
+        'year': year,
+        'month': months[month],
+        'calendar': cal,
+        'events': events,
+        'prev_year': prev_year,
+        'prev_month': prev_month,
+        'next_year': next_year,
+        'next_month': next_month,
+        'weekdays': weekdays,
+        'form': form,
+    }
+    return render(request, 'calendar.html', context)
+
+
+
+@login_required
+@admin_required
+def dashboard(request):
+    query = request.GET.get('q')
+    result = None
+    events = []
+
+    count_classes = Course.objects.count()
+    count_students = Student.objects.count()
+    count_staff = NonStudent.objects.count()
+
+    if query == 'calendar':
+        result = calendar_context(request)
+        events = Event.objects.all()
+        print(events)
+
+
 
     context = {
         'count_classes': count_classes,
         'count_students': count_students,
         'count_staff': count_staff,
         'calendar_result': result,
-        'form':form,
         'events':events
     }
     return render(request, 'admin/dashboard.html', context)

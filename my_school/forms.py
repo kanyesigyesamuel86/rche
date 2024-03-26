@@ -60,7 +60,7 @@ class NonStudentForm(forms.ModelForm):
         model = NonStudent
         fields = ['role', 'department', 'date_of_joining', 'phone_number', 'address', 'next_of_kin', 'next_of_kin_phone', 'course', 'subject' ]
         widgets ={ 
-            'date_of_joining' :forms.DateInput(attrs = {'placeholder':'mm/dd/yyyy', 'label':'Date of joining(e.g 12/28/2000)'}) 
+            'date_of_joining' :forms.DateInput(attrs = {'type': 'date','placeholder':'mm/dd/yyyy', 'label':'Date of joining(e.g 12/28/2000)'}) 
         }
 
 
@@ -72,4 +72,7 @@ class ReportForm(forms.ModelForm):
 class EventForm(forms.ModelForm):
     class Meta:
         model = Event
-        fields = '__all__'
+        fields = ['title', 'date']
+        widgets ={ 
+            'date' :forms.DateInput(attrs = {'placeholder':'mm/dd/yyyy', 'label':'Date of joining(e.g 12/28/2000)'}) 
+        }

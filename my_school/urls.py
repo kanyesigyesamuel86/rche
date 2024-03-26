@@ -29,6 +29,7 @@ urlpatterns = [
     path('upload_reports/<int:course_id>/', views.upload_reports, name='upload_reports'),
     path('applications_review', views.applications_review, name = 'applications_review'),
     path('class_details/<int:course_id>/', views.apply_course, name='class_details'),
+    path('calendar', views.calendar_context, name = 'calendar')
 
 
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

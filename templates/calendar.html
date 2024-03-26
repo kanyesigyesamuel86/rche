@@ -1,6 +1,6 @@
-{% extends 'base.html' %}
+{% extends 'dashboard.html' %}
 
-{% block content %}
+{% block admin %}
 <style>
     /* Calendar styling */
     .calendar {
@@ -52,61 +52,77 @@
 </style>
 
 <div class="about-content">
-    <h1>{{ month }} {{ year }}</h1>
-<div>
-    <a href="?year={{ prev_year }}&month={{ prev_month }}" class="nav-btn">&lt; Prev</a>
-    <a href="?year={{ next_year }}&month={{ next_month }}" class="nav-btn">Next &gt;</a>
-</div>
+    {{context}}
+  <div class="calendar-part">
+    
+    <div>
+      <h2>{{ calendar_result.month }} {{ calendar_result.year }}</h2>
+ 
 
-<table class="calendar">
-    <thead>
-        <tr>
-            {% for day in weekdays%}
-                <th>{{ day }}</th>
-            {% endfor %}
-        </tr>
-    </thead>
-    <tbody>
-        {% for week in calendar %}
-            <tr>
-                {% for day in week %}
-                    <td{% if day == today.day and month == today.month and year == today.year %} class="today"{% endif %}
-                        {% for event in events %}
-                            {% if event.day == day %}
-                                class="event"
-                            {% endif %}
-                        {% endfor %}>
-                        {% if day != 0 %}
-                            {{ day }}
-                            <ul>
-                                {% for event in events %}
-                                    {% if event.day == day %}
-                                    {% endif %}
-                                {% endfor %}
-                            </ul>
-                        {% endif %}
-                    </td>
-                {% endfor %}
-            </tr>
-        {% endfor %}
-    </tbody>
-</table><br>
-
-<i style="color: #0e498b; font-size: 10px; font-weight: bold;">
-{% for week in calendar %}
-{% for day in week %}
-{% if day != 0 %}
-{% for event in events %}
-{% if event.day == day %}
-{{day}}/{{month}}/{{year}}: {{event.title}} <br>
-{% endif %}
-{% endfor %}
-{% endif %}
-{% endfor %}
-{% endfor %}
-</i>
+<a href="?q=calendar&year={{ prev_year }}&month={{ prev_month }}" class="nav-btn">&lt; Prev</a>
+<a href="?q=calendar&year={{ next_year }}&month={{ next_month }}" class="nav-btn">Next &gt;</a>
 
 
-</div>
+      
+      <table class="calendar">
+          <thead>
+              <tr>
+                  {% for day in weekdays %}
+                      <th>{{ day }}</th>
+                  {% endfor %}
+              </tr>
+          </thead>
+          <tbody>
+              {% for week in calendar %}
+                  <tr>
+                      {% for day in week %}
+                          <td{% if day == today.day and month == month and calendar_result.year == today.year %} class="today"{% endif %}
+                              {% for event in events %}
+                                  {% if event.day == day %}
+                                      class="event"
+                                  {% endif %}
+                              {% endfor %}>
+                              {% if day != 0 %}
+                                  {{ day }}
+                              {% endif %}
+                          </td>
+                      {% endfor %}
+                  </tr>
+              {% endfor %}
+          </tbody>
+      </table><br>
+      
+      <i style="color: #0e498b; font-size: 10px; font-weight: bold;">
+      {% for week in calendar %}
+          {% for day in week %}
+              {% if day != 0 %}
+                  {% for event in events %}
+                      {% if event.day == day %}
+                          {{ day }}/{{ month }}/{{year }}: {{ event.title }} <br>
+                      {% endif %}
+                  {% endfor %}
+              {% endif %}
+          {% endfor %}
+      {% endfor %}
+      </i>
+    </div>
+    <div><h3>Events</h3>
+        <h4>Upcoming Events!</h4>
+        {% for event in events %}
+        {{event.title}}: {{event.date}} <br>
+        {% endfor %} <br><br>
+        <a href="?q=calendar&add_event=add-event">Add event</a>
+        {% if form %}
+        <form action="" method="post">
+            {% csrf_token %}
+            {{form.as_p}}
+            <button type="submit">Add</button>
+        </form>
+        {% endif %}
+
+    </div>
+    </div>
+  </div>
+  </div>
 
 {% endblock %}
