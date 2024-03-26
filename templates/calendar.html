@@ -1,0 +1,112 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<style>
+    /* Calendar styling */
+    .calendar {
+        font-family: Arial, sans-serif;
+        width: 30%;
+        border-style: solid;
+        border-radius: 50px;
+        border-width: 1px;
+        border-color: blue;
+    }
+
+    .calendar th {
+        background-color: #f2f2f2;
+        color: #333;
+        padding: 5px;
+        text-align: center;
+        font-weight: bold;
+    }
+
+    .calendar td {
+        border: none;
+        min-height: 30px;
+        text-align: center;
+    }
+
+    .calendar .today {
+        background-color: maroon;
+    }
+
+    .calendar .event {
+        background-color: #0e498b;
+        color: white;
+    }
+
+    /* Navigation buttons */
+    .nav-btn {
+        display: inline-block;
+        padding: 5px 10px;
+        background-color: #f2f2f2;
+        color: maroon;
+        text-decoration: none;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+    }
+
+    .nav-btn:hover {
+        background-color: #e6e6e6;
+    }
+</style>
+
+<div class="about-content">
+    <h1>{{ month }} {{ year }}</h1>
+<div>
+    <a href="?year={{ prev_year }}&month={{ prev_month }}" class="nav-btn">&lt; Prev</a>
+    <a href="?year={{ next_year }}&month={{ next_month }}" class="nav-btn">Next &gt;</a>
+</div>
+
+<table class="calendar">
+    <thead>
+        <tr>
+            {% for day in weekdays%}
+                <th>{{ day }}</th>
+            {% endfor %}
+        </tr>
+    </thead>
+    <tbody>
+        {% for week in calendar %}
+            <tr>
+                {% for day in week %}
+                    <td{% if day == today.day and month == today.month and year == today.year %} class="today"{% endif %}
+                        {% for event in events %}
+                            {% if event.day == day %}
+                                class="event"
+                            {% endif %}
+                        {% endfor %}>
+                        {% if day != 0 %}
+                            {{ day }}
+                            <ul>
+                                {% for event in events %}
+                                    {% if event.day == day %}
+                                    {% endif %}
+                                {% endfor %}
+                            </ul>
+                        {% endif %}
+                    </td>
+                {% endfor %}
+            </tr>
+        {% endfor %}
+    </tbody>
+</table><br>
+
+<i style="color: #0e498b; font-size: 10px; font-weight: bold;">
+{% for week in calendar %}
+{% for day in week %}
+{% if day != 0 %}
+{% for event in events %}
+{% if event.day == day %}
+{{day}}/{{month}}/{{year}}: {{event.title}} <br>
+{% endif %}
+{% endfor %}
+{% endif %}
+{% endfor %}
+{% endfor %}
+</i>
+
+
+</div>
+
+{% endblock %}

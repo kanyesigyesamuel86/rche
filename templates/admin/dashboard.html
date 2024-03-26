@@ -1,0 +1,237 @@
+{% extends 'dashboard.html' %} {% block title %} Dashboard{% endblock %} 
+{% block admin %}
+<style>
+.calendar-part {
+    box-shadow: 0 0.7 0 rgb(8, 7, 7);
+    z-index: 998;
+    text-align: center;
+    background-color: white;
+    display: flex;
+    gap: 40px;
+    position: absolute;
+    top: 100px;
+    right: 20px;
+    padding: 20px;
+    border-radius: 5px;
+    
+  }
+  form {
+    width: 200px;
+    padding: 5px;
+    
+  }
+  input {
+    width: 100%;
+    height: 30px;
+    margin: 0;
+    padding: 0;
+  }
+</style>
+
+<div class="about-content">
+  <div class="top-content">
+    <div>
+      <h2>Welcome, {{user.first_name}} {{ calendar_result.month }} </h2>
+    </div>
+    <div class="search-box">
+      <form method="GET" action="{% url 'dashboard' %}" class="search-form">
+        <input
+          type="text"
+          name="q"
+          id="searchInput"
+          class="search-input"
+          placeholder="Search subjects..."
+        />
+        <button
+          type="submit"
+          class="search-button"
+          style="
+            background-color: white;
+            color: black;
+            flex: 1;
+            font-size: 14px;
+            border: none;
+            margin: 0;
+            border-radius: 20px;
+            padding: 3px 10px 0 0;
+            width: 5%;
+            align-items: center;
+          "
+        >
+          <i class="fi fi-br-search"></i>
+        </button>
+      </form>
+
+      {% if query %}
+<div class="search-results">
+  {% if filtered_names %}
+  <i>Search results:</i><br /><br />
+  Classes: 
+  {% for course in teacher.course.all %} 
+  {% if course.name in filtered_names %}
+  <a
+    href="{% url 'class_details' course_id=course.id %}"
+    style="
+      border-style: solid;
+      border-radius: 5px;
+      border-width: 1px;
+      margin: 2px;
+    "
+  >
+    {{ course.name }}
+  </a>
+  {% endif %} 
+  {% endfor %} <br /><br />
+  Subjects: 
+  {% for course in teacher.subject.all %} 
+  {% if course.name in filtered_names %}
+  <a
+    href="{% url 'class_details' course_id=course.id %}"
+    style="
+      border-style: solid;
+      border-radius: 5px;
+      border-width: 1px;
+      margin: 2px;
+    "
+  >
+    {{ course.name }}
+  </a>
+  {% endif %} 
+  {% endfor %} 
+  {% else %} 
+  No matching results... 
+  {% endif %}
+</div>
+{% endif %}
+
+    </div>
+  </div>
+
+
+
+  <div class="summary">
+    <div class="summary-part">
+      <i class="fi fi-sr-users"></i>
+      <h5>Enrolment <br /><br />{{count_students}}</h5>
+    </div>
+    <div class="summary-part">
+      <i class="fi fi-sr-graduation-cap"> </i>
+      <h5>Total classes <br /><br />{{count_subjects}}</h5>
+    </div>
+    <div class="summary-part">
+      <i class="fi fi-sr-books"></i>
+      <h5>Total Teachers <br /><br />{{count_staff}}</h5>
+    </div>
+    <div class="summary-part-graph">
+      <img src="data:image/png;base64,{{ graphic }}" alt="Bar Graph" />
+      <div class="stats">
+        <h3>Average</h3>
+        {% for class_name, average in list %} {{class_name}}: {{average}}%
+        <br />
+        {% endfor %} <br />
+
+        <h3>Passing rate</h3>
+        {% for class, average_score in list %} {{class}}: {{average_score}}
+        <br />
+        {% endfor %} <br />
+      </div>
+    </div>
+
+
+    {% if calendar_result %}
+  <div class="calendar-part">
+    
+    <div>
+      <h2>{{ calendar_result.month }} {{ calendar_result.year }}</h2>
+ 
+
+<a href="?q=calendar&year={{ calendar_result.prev_year }}&month={{ calendar_result.prev_month }}" class="nav-btn">&lt; Prev</a>
+<a href="?q=calendar&year={{ calendar_result.next_year }}&month={{ calendar_result.next_month }}" class="nav-btn">Next &gt;</a>
+
+
+      
+      <table class="calendar">
+          <thead>
+              <tr>
+                  {% for day in calendar_result.weekdays %}
+                      <th>{{ day }}</th>
+                  {% endfor %}
+              </tr>
+          </thead>
+          <tbody>
+              {% for week in calendar_result.calendar %}
+                  <tr>
+                      {% for day in week %}
+                          <td{% if day == calendar_result.today.day and calendar_result.month == calendar_result.today.month and calendar_result.year == calendar_result.today.year %} class="today"{% endif %}
+                              {% for event in calendar_result.events %}
+                                  {% if event.day == day %}
+                                      class="event"
+                                  {% endif %}
+                              {% endfor %}>
+                              {% if day != 0 %}
+                                  {{ day }}
+                              {% endif %}
+                          </td>
+                      {% endfor %}
+                  </tr>
+              {% endfor %}
+          </tbody>
+      </table><br>
+      
+      <i style="color: #0e498b; font-size: 10px; font-weight: bold;">
+      {% for week in calendar_result.calendar %}
+          {% for day in week %}
+              {% if day != 0 %}
+                  {% for event in calendar_result.events %}
+                      {% if event.day == day %}
+                          {{ day }}/{{ calendar_result.month }}/{{ calendar_result.year }}: {{ event.title }} <br>
+                      {% endif %}
+                  {% endfor %}
+              {% endif %}
+          {% endfor %}
+      {% endfor %}
+      </i>
+    </div>
+    <div><h3>Events</h3>
+        <h4>Upcoming Events!</h4>
+        {% for event in events %}
+        {{event.title}}: {{event.date}}
+        {% endfor %} <br><br>
+        <a href="?q=calendar&add_event=add-event">Add event</a>
+        {% if form %}
+        <form action="" method="post">
+            {% csrf_token %}
+            {{form.as_p}}
+            <button type="submit">Add</button>
+        </form>
+        {% endif %}
+
+    </div>
+    </div>
+  {% endif %}
+  </div>
+  </div>
+  <br /><br />
+  <div class="class-section">
+    <h2>My Classes</h2>
+    <br />
+    <div class="my_classes">
+      {% for course in teacher.course.all %}
+      <a href="{% url 'class_details' course_id=course.id %}">
+        <div class="my_class">
+          <h4>{{ course.name }}</h4>
+          <br />
+          {{ course.description}} 
+          
+          {% for subject in course.subject.all %} 
+          {% if subject in teacher_instance.subject.all %} 
+          {{subject.name}} 
+          {% endif %} 
+          {% endfor %}
+        </div>
+      </a>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+{% endblock %}

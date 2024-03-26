@@ -1,5 +1,5 @@
 from django import forms
-from .models import Application, Student, Course, Subject, CustomUser, NonStudent, Report
+from .models import Application, Student, Course, Subject, CustomUser, NonStudent, Report, Event
 from django.contrib.auth.forms import UserCreationForm
 from django_countries.fields import CountryField
 from cities_light.models import Country, City
@@ -69,3 +69,7 @@ class ReportForm(forms.ModelForm):
         model = Report
         fields = ['report_file']
 
+class EventForm(forms.ModelForm):
+    class Meta:
+        model = Event
+        fields = '__all__'

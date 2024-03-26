@@ -2,10 +2,10 @@ import matplotlib
 matplotlib.use('Agg')
 from django.shortcuts import render, redirect, get_object_or_404, HttpResponse
 from functools import wraps
-from django.http import HttpResponseForbidden, HttpResponseBadRequest
+from django.http import HttpResponseForbidden, HttpResponseBadRequest, JsonResponse
 from django.contrib.auth import authenticate, login, logout
-from .forms import CustomUserCreationForm, StudentForm, StudentForm2, NonStudentForm, ReportForm, ApplicationReviewForm, Application, SubjectForm, CourseForm, ApplicationForm
-from . models import Student, Enrollment, Assignment, Attendance, Announcement, LibraryBook, BorrowedBook, Fee, Feedback, Course, CustomUser, NonStudent, Subject, Report, Application
+from .forms import CustomUserCreationForm, StudentForm, StudentForm2, NonStudentForm, ReportForm, ApplicationReviewForm, Application, SubjectForm, CourseForm, ApplicationForm, EventForm
+from . models import Student, Enrollment, Assignment, Attendance, Announcement, LibraryBook, BorrowedBook, Fee, Feedback, Course, CustomUser, NonStudent, Subject, Report, Application, Event
 from django .views import generic
 from django.contrib import messages
 from .decorators import hteacher_required, admin_required, teacher_required
@@ -26,6 +26,8 @@ import random
 import matplotlib.pyplot as plt
 from io import BytesIO
 import base64
+from datetime import datetime, timedelta
+import calendar
 
 
 
@@ -209,10 +211,6 @@ class ReportCourseListView(generic.ListView):
     model = Course
     template_name = 'dashboard.html'
 
-@login_required
-@admin_required
-def dashboard(request):
-    return render(request, 'dashboard.html')
 
 @login_required
 @admin_required
@@ -318,6 +316,8 @@ def account_info(request):
 
 @login_required
 def student_dashboard(request):
+    query = request.GET.get('q')
+    result = None
     try:
         student = Student.objects.get(user=request.user)
         student = request.user.student
@@ -325,12 +325,95 @@ def student_dashboard(request):
     except Student.DoesNotExist:
         messages.error(request, 'Not available.')
         return redirect('home')
+    print(query)
+    if query == 'calendar':
+        result = calendar_context(request)
     
     context = {
         'student': student,
-        'report' : report
+        'report' : report,
+        'calendar_result': result,
     }
     return render(request, 'student/dashboard.html', context)
+
+def calendar_context(request):
+    now = datetime.now()
+    year = request.GET.get('year', now.year)
+    month = request.GET.get('month', now.month)
+
+    year = int(year) if year else now.year
+    month = int(month) if month else now.month
+
+    # Calculate the previous and next months
+    prev_month = month - 1 if month > 1 else 12
+    prev_year = year if month > 1 else year - 1
+
+    next_month = month + 1 if month < 12 else 1
+    next_year = year if month < 12 else year + 1
+
+    # Get the calendar for the specified month
+    cal = calendar.monthcalendar(year, month)
+
+    weekdays = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun' ]
+    months = ['', 'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
+
+    # Assuming events is a list of events for the month
+    events = [
+        {'day': 1, 'title': 'Event 1'},
+        {'day': 15, 'title': 'Event 2'},
+        # Add more events as needed
+    ]
+    print(next_year, next_month, now, year, month)
+
+    return {
+        'year': year,
+        'month': months[month],
+        'calendar': cal,
+        'events': events,
+        'prev_year': prev_year,
+        'prev_month': prev_month,
+        'next_year': next_year,
+        'next_month': next_month,
+        'weekdays': weekdays
+    }
+
+
+
+@login_required
+@admin_required
+def dashboard(request):
+    query = request.GET.get('q')
+    add_event = request.GET.get('add_event')
+    result = None
+
+    count_classes = Course.objects.count()
+    count_students = Student.objects.count()
+    count_staff = NonStudent.objects.count()
+
+    if query == 'calendar':
+        result = calendar_context(request)
+        events = Event.objects.all()
+        print(events)
+    
+    form = None
+    if add_event == 'add-event':
+        if request.method == 'POST':
+            form = EventForm(request.POST)
+            if form.is_valid():
+                form.save()
+        else:
+            form = EventForm()
+
+
+    context = {
+        'count_classes': count_classes,
+        'count_students': count_students,
+        'count_staff': count_staff,
+        'calendar_result': result,
+        'form':form,
+        'events':events
+    }
+    return render(request, 'admin/dashboard.html', context)
 
 @login_required
 @teacher_required
@@ -428,7 +511,7 @@ def upload_reports(request, course_id):
     return render(request, 'admin/upload_reports.html', {'lists':lists})
 
 @login_required
-#@admin_required
+@admin_required
 def applications_review(request):
     applications = Application.objects.exclude(status = 'completed')
     forms = []

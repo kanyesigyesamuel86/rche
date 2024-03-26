@@ -24,6 +24,10 @@ class CustomUser(AbstractUser):
     )
     user_type = models.CharField(max_length=20, choices=USER_TYPES, default='other')
 
+class Event(models.Model):
+    title = models.CharField(max_length=255)
+    date = models.DateField(null = True)
+
 
 class Announcement(models.Model):
     title = models.CharField(max_length=100)

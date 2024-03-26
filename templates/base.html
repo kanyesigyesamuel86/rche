@@ -38,6 +38,24 @@
       rel="stylesheet"
       href="https://cdn-uicons.flaticon.com/2.2.0/uicons-regular-rounded/css/uicons-regular-rounded.css"
     />
+    <link
+      rel="stylesheet"
+      href="https://cdn-uicons.flaticon.com/2.2.0/uicons-solid-straight/css/uicons-solid-straight.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn-uicons.flaticon.com/2.2.0/uicons-regular-rounded/css/uicons-regular-rounded.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn-uicons.flaticon.com/2.2.0/uicons-solid-rounded/css/uicons-solid-rounded.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn-uicons.flaticon.com/2.2.0/uicons-bold-rounded/css/uicons-bold-rounded.css"
+    />
+    <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/2.2.0/uicons-thin-straight/css/uicons-thin-straight.css'>
+    <link href='https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/5.10.1/main.min.css' rel='stylesheet' />
   </head>
   <style>
     header ul {
@@ -94,7 +112,7 @@
     <header class="navbar">
       {% if user.is_authenticated %}
       <ul>
-        <a href="/">Welcome</a>
+        <a href="/">Home</a>
         {% if user.user_type == 'admin' %}
         <a href="{% url 'dashboard' %}">Dashboard</a>
         {%elif user.user_type == 'headteacher' %}
@@ -132,7 +150,7 @@
 
       {% else %}
       <ul>
-        <a href="/">Welcome</a>
+        <a href="/">Home</a>
         <a href="#">About</a>
         <a href="#">News</a>
         <a href="#">&#128489;</a>

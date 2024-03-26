@@ -73,39 +73,37 @@
     <h4>
       <ul>
         <li>
-          <a href="{% url 'dashboard' %}"> <i class="fi fi-br-apps-add"> </i> Dashboard</a>
+          <a href="{% url 'student_dashboard' %}"> <i class="fi fi-br-apps-add"> </i> Dashboard</a>
         </li>
         <li>
-          <a href="{% url 'populate' %}"
-            ><i class="fi fi-ss-database"> </i>Databases</a
-          >
-        </li>
+            <a href="{% url 'reports' %}">
+              <i class="fi fi-sr-newspaper"> </i> My Subjects</a
+            >
+          </li>
+
         <li>
-          <a href="{% url 'applications_review' %}"
-            ><i class="fi fi-rr-chalkboard-user"> </i>Applications</a
-          >
-        </li>
-        <li>
-          <a href="{% url 'reports' %}">
-            <i class="fi fi-sr-newspaper"> </i> Reports</a
-          >
-        </li>
+            <a href="{% url 'reports' %}">
+              <i class="fi fi-sr-newspaper"> </i> Grades</a
+            >
+          </li>
         <li>
           <a href="{% url 'registration' %}">
-            <i class="fi fi-br-enter"> </i>Register</a
+            <i class="fi fi-ts-megaphone"></i> </i>Announcements</a
           >
         </li>
         <li>
-          <a href="?q=calendar"><i class="fi fi-sr-calendar-days"> </i>Schedule</a>
         </li>
         <li>
+            <a href="?q=calendar"><i class="fi fi-sr-calendar-days"> </i>Schedule</a>
+          </li>
+        <li>
           <a href="#"><i class="fi fi-rr-user"></i> My Account</a>
-        </li>
       </ul>
     </h4>
   </div>
 
-  {% block admin %} {% endblock %}
+  {% block student %} 
+  {% endblock %}
 </div>
 
 {% endblock %}

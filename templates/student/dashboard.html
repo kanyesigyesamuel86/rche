@@ -1,87 +1,75 @@
 <!-- dashboard.html -->
-{% extends 'base.html' %}
+{% extends 'student/student.html' %}
 {% load static %}
-{% block content %}
 
+{% block student %}
 <style>
-  img {
-    width: 180px;
-    height: 180px;
-    border-radius: 50%;
-  }
+
 </style>
 
 <div class="about-content">
-
-  <h1>Welcome, {{ student.user.first_name }} {{ student.user.last_name }}</h1><br><br>
-{% if user.photo %}
-<img src="{{user.photo.url}}" alt="...">
-{% else  %}
-<img src="static 'images/user_logo.jpg' " alt="...">
-{% endif %}
-
-{% if report %}
-  <p><a href="{{ student.report.report_file.url }}" download ><Det>Download Report</Det>: </a></p>
+<div class="summary">
+<div class="report">    {% if report %}
+  <p><a href="{{ student.report.report_file.url }}" download><Det>Download Report</Det>: </a></p>
 {% else %}
   <p>No report found.</p>
-{% endif %} </p>
-<h2>Profile</h2>
-<p>Roll Number: {{ student.roll_number }}</p>
-<p>Phone Number: {{ student.phone_number }}</p>
-<p>Address: {{ student.address }}</p>
-<br><br>
-<h2>Courses</h2>
-<ul>
-  <li>{{ student.course.name }} - {{student.course.description }}</li>
-</ul>
+{% endif %}</div>
+{% if calendar_result %}
+  <div class="calendar-part">
+    
+    <div>
+      <h2>{{ calendar_result.month }} {{ calendar_result.year }}</h2>
+      <div>
 
-<h2>Assignments</h2>
-<ul>
-  {% for assignment in assignments %}
-  <li>{{ assignment.title }} - Due Date: {{ assignment.due_date }}</li>
-  {% endfor %}
-</ul>
+<a href="?q=calendar&year={{ calendar_result.prev_year }}&month={{ calendar_result.prev_month }}" class="nav-btn">&lt; Prev</a>
+<a href="?q=calendar&year={{ calendar_result.next_year }}&month={{ calendar_result.next_month }}" class="nav-btn">Next &gt;</a>
 
-<h2>Attendance</h2>
-<table>
-  <tr>
-    <th>Date</th>
-    <th>Status</th>
-  </tr>
-  {% for att in attendance %}
-  <tr>
-    <td>{{ att.date }}</td>
-    <td>{{ att.status }}</td>
-  </tr>
-  {% endfor %}
-</table>
-
-<h2>Announcements</h2>
-<ul>
-  {% for announcement in announcements %}
-  <li>{{ announcement.title }} - {{ announcement.content }} - {{ announcement.date }}</li>
-  {% endfor %}
-</ul>
-
-<h2>Library</h2>
-<ul>
-  {% for book in borrowed_books %}
-  <li>{{ book.book.title }} by {{ book.book.author }}</li>
-  {% endfor %}
-</ul>
-
-<h2>Fees</h2>
-<ul>
-  {% for fee in fees %}
-  <li>Amount: {{ fee.amount }} - Payment Date: {{ fee.payment_date }}</li>
-  {% endfor %}
-</ul>
-
-<h2>Feedbacks</h2>
-<ul>
-  {% for feedback in feedbacks %}
-  <li>{{ feedback.content }} - {{ feedback.date }}</li>
-  {% endfor %}
-</ul>
+      </div>
+      
+      <table class="calendar">
+          <thead>
+              <tr>
+                  {% for day in calendar_result.weekdays %}
+                      <th>{{ day }}</th>
+                  {% endfor %}
+              </tr>
+          </thead>
+          <tbody>
+              {% for week in calendar_result.calendar %}
+                  <tr>
+                      {% for day in week %}
+                          <td{% if day == calendar_result.today.day and calendar_result.month == calendar_result.today.month and calendar_result.year == calendar_result.today.year %} class="today"{% endif %}
+                              {% for event in calendar_result.events %}
+                                  {% if event.day == day %}
+                                      class="event"
+                                  {% endif %}
+                              {% endfor %}>
+                              {% if day != 0 %}
+                                  {{ day }}
+                              {% endif %}
+                          </td>
+                      {% endfor %}
+                  </tr>
+              {% endfor %}
+          </tbody>
+      </table><br>
+      
+      <i style="color: #0e498b; font-size: 10px; font-weight: bold;">
+      {% for week in calendar_result.calendar %}
+          {% for day in week %}
+              {% if day != 0 %}
+                  {% for event in calendar_result.events %}
+                      {% if event.day == day %}
+                          {{ day }}/{{ calendar_result.month }}/{{ calendar_result.year }}: {{ event.title }} <br>
+                      {% endif %}
+                  {% endfor %}
+              {% endif %}
+          {% endfor %}
+      {% endfor %}
+      </i>
+    </div>
+  {% endif %}
+  </div>
+</div>
 </div>
 {% endblock %}

@@ -18,10 +18,22 @@ Register
     th {
         background-color: #f2f2f2;
     }
+
+  img {
+    width: 180px;
+    height: 180px;
+    border-radius: 50%;
+  }
+
 </style>
 
 <div class="about-content">
     <h2>Hi, {{user.username}}  </h2> <br><br>
+    {% if user.photo %}
+    <img src="{{user.photo.url}}" alt="...">
+    {% else  %}
+    <img src="static 'images/user_logo.jpg' " alt="...">
+    {% endif %}
     <p>
        <b>Name:</b> {{user.first_name}}  {{user.last_name}} <br>
        {% if user.email %}
